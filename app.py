@@ -20,19 +20,59 @@ st.set_page_config(
 )
 
 # ═══════════════════════════════════════════════════════════════
-#  BRAND TOKENS
+#  THEME / BRAND TOKENS
 # ═══════════════════════════════════════════════════════════════
-NAVY   = "#151731"
-PURPLE = "#760681"
-PINK   = "#CE008D"
-ORANGE = "#EF4D03"
-BG     = "#0b0d1f"
-CARD   = "#13162e"
-CARD2  = "#1a1e3c"
-TEXT   = "#dde0f2"
-MUTED  = "#6b6f8e"
-GREEN  = "#4ade80"
-RED_SOFT = "#f87171"
+THEME_MODE = st.sidebar.radio(
+    "Tema",
+    ["Escuro", "Claro"],
+    index=0,
+    help="Use o modo claro para fundo creme; modo escuro para tema noturno.",
+)
+
+
+def get_tokens(mode: str) -> dict:
+    if mode == "Claro":
+        return {
+            "NAVY": "#5b4e6e",
+            "PURPLE": "#760681",
+            "PINK": "#CE008D",
+            "ORANGE": "#EF4D03",
+            "BG": "#F9F5EF",
+            "CARD": "#FFFFFF",
+            "CARD2": "#F4EEE2",
+            "TEXT": "#1F1F1F",
+            "MUTED": "#5C5C6C",
+            "GREEN": "#1E7E34",
+            "RED_SOFT": "#d64545",
+        }
+
+    # dark mode (default)
+    return {
+        "NAVY": "#151731",
+        "PURPLE": "#760681",
+        "PINK": "#CE008D",
+        "ORANGE": "#EF4D03",
+        "BG": "#0b0d1f",
+        "CARD": "#13162e",
+        "CARD2": "#1a1e3c",
+        "TEXT": "#dde0f2",
+        "MUTED": "#6b6f8e",
+        "GREEN": "#4ade80",
+        "RED_SOFT": "#f87171",
+    }
+
+_tokens = get_tokens(THEME_MODE)
+NAVY = _tokens["NAVY"]
+PURPLE = _tokens["PURPLE"]
+PINK = _tokens["PINK"]
+ORANGE = _tokens["ORANGE"]
+BG = _tokens["BG"]
+CARD = _tokens["CARD"]
+CARD2 = _tokens["CARD2"]
+TEXT = _tokens["TEXT"]
+MUTED = _tokens["MUTED"]
+GREEN = _tokens["GREEN"]
+RED_SOFT = _tokens["RED_SOFT"]
 
 # ═══════════════════════════════════════════════════════════════
 #  GLOBAL CSS
@@ -341,9 +381,6 @@ def plotly_theme() -> dict:
                    linecolor="rgba(255,255,255,0.08)",
                    tickfont=dict(size=11)),
         margin=dict(l=8, r=8, t=30, b=8),
-        legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(size=11),
-                    orientation="h", yanchor="bottom", y=1.02,
-                    xanchor="right", x=1),
         hoverlabel=dict(bgcolor=NAVY, font=dict(family="Figtree", size=12),
                         bordercolor="rgba(255,255,255,0.15)"),
     )
