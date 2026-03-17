@@ -689,6 +689,14 @@ def fmt_date_pt_br(value: datetime) -> str:
     return f"{value.day:02d} de {months[value.month - 1]} de {value.year}"
 
 
+def fmt_month_short_pt(value: datetime) -> str:
+    months = [
+        "jan", "fev", "mar", "abr", "mai", "jun",
+        "jul", "ago", "set", "out", "nov", "dez",
+    ]
+    return f"{months[value.month - 1]}/{str(value.year)[2:]}"
+
+
 def fmt_k(v: float) -> str:
     if v >= 1_000_000: return f"{v/1_000_000:.1f}M"
     if v >= 1_000: return f"{v/1_000:.1f}k"
@@ -809,6 +817,19 @@ RENEW_12M   = 0.814
 renew_trend = [0.78, 0.82, 0.86, 0.81, 0.79, 0.84, 0.88, 0.836]
 new_arr     = [3200, 4100, 5800, 3600, 4400, 6200, 3800, 4900]
 SUBS_VENCE  = {"30d": 118, "60d": 204, "90d": 337}
+CURR_MONTH = datetime(TODAY.year, TODAY.month, 1)
+HIST_MONTH_DATES = pd.date_range(end=CURR_MONTH, periods=6, freq="MS")
+FC_MONTH_DATES = pd.date_range(start=CURR_MONTH + pd.offsets.MonthBegin(1), periods=6, freq="MS")
+MONTHS_HIST = [fmt_month_short_pt(d.to_pydatetime()) for d in HIST_MONTH_DATES]
+MONTHS_FORECAST = [fmt_month_short_pt(d.to_pydatetime()) for d in FC_MONTH_DATES]
+REV_MONTH_HIST = [332000, 341000, 356000, 349000, 378000, 392000]
+REV_FORECAST_BASE = [401000, 411000, 423000, 434000, 447000, 460000]
+REV_FORECAST_LOW = [391000, 398000, 408000, 417000, 427000, 438000]
+REV_FORECAST_HIGH = [409000, 423000, 437000, 450000, 467000, 482000]
+REV_TARGET = [405000, 414000, 426000, 438000, 452000, 468000]
+REV_DRIVER_RETAIN = [252000, 258000, 265000, 272000, 279000, 286000]
+REV_DRIVER_NEW = [111000, 114000, 118000, 121000, 125000, 129000]
+REV_DRIVER_UPSELL = [38000, 39000, 40000, 41000, 43000, 45000]
 
 # ── Products ─────────────────────────────────────────────────
 PRODS = [
@@ -1025,12 +1046,13 @@ st.markdown(f'<div class="context-strip">{"".join(hero_chips)}</div>', unsafe_al
 # ═══════════════════════════════════════════════════════════════
 #  TABS
 # ═══════════════════════════════════════════════════════════════
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "💰  Receita",
     "📡  Canais",
     "👥  Audiência",
     "📝  Cadastros",
     "🛒  Checkout",
+    "🔮  Forecast",
 ])
 
 
@@ -1184,7 +1206,7 @@ with tab2:
     cb1, cb2 = st.columns([2, 1])
     with cb1:
         top_channel = CHS[int(np.argmax(ch_rev))]
-        section(f"{top_channel} lidera a receita entre os canais")
+        section(f"Quais canais mais trazem receita: {top_channel} lidera a semana")
         takeaway(
             f"<strong>Takeaway:</strong> {top_channel} concentra a maior receita da semana, "
             f"enquanto o gráfico mantém os demais canais como comparação secundária.",
@@ -1206,7 +1228,12 @@ with tab2:
         st.plotly_chart(fig_chr, width="stretch", config=cfg)
 
     with cb2:
-        section("Conv. por canal (R$/Sessão)")
+        section("Eficiência por canal (R$/sessão)")
+        takeaway(
+            "<strong>Takeaway:</strong> este indicador mostra monetização por sessão, então ajuda a separar "
+            "volume de tráfego de qualidade econômica do canal.",
+            "accent",
+        )
         fig_ccv = go.Figure(go.Bar(
             x=ch_conv, y=CHS,
             orientation="h",
@@ -1227,7 +1254,7 @@ with tab2:
         ))
         st.plotly_chart(fig_ccv, width="stretch", config=cfg)
 
-    section("Detalhamento por canal")
+    section("Onde vale aprofundar por canal")
     rows = ""
     ch_deltas = [4.2, -1.8, 2.1, -3.4, 6.7, 8.4]
     for ch, rev_v, sess, conv, delta_v in zip(CHS, ch_rev, ch_sess, ch_conv, ch_deltas):
@@ -1242,12 +1269,18 @@ with tab2:
     <table class="dtable">
       <thead><tr>
         <th>Canal</th><th>Receita</th><th>Sessões</th>
-        <th>Conversão (R$/Sessão)</th><th>vs Sem. Ant.</th>
+        <th>Eficiência (R$/Sessão)</th><th>vs Sem. Ant.</th>
       </tr></thead>
       <tbody>{rows}</tbody>
     </table>""", unsafe_allow_html=True)
 
     spacer()
+    section("O que os canais próprios entregam")
+    takeaway(
+        "<strong>Takeaway:</strong> os canais próprios aparecem separados porque ajudam a ler retenção e reativação, "
+        "não apenas aquisição bruta.",
+        "good",
+    )
 
     ce1, ce2 = st.columns(2)
     with ce1:
@@ -1264,7 +1297,8 @@ with tab2:
             st.markdown(f'<div class="band"><div class="band-label">{lbl}</div>'
                         f'<div class="band-val">{val}</div></div>', unsafe_allow_html=True)
 
-    section("Google Search Console — evolução semanal")
+    spacer()
+    section("Descoberta orgânica — como está o topo do funil")
     cg1, cg2 = st.columns(2)
     with cg1:
         takeaway(
@@ -1386,7 +1420,44 @@ with tab3:
         fig_caud.update_yaxes(showgrid=False, categoryorder="array", categoryarray=[item[0] for item in sess_sorted[::-1]])
         st.plotly_chart(fig_caud, width="stretch", config=cfg)
 
-    section("Perfil da audiência — três dimensões")
+    section("Quem mais monetiza dentro da audiência")
+    takeaway(
+        "<strong>Takeaway:</strong> a mesma audiência não vale igual em receita. O bloco abaixo prioriza "
+        "os segmentos com maior conversão antes da leitura demográfica/comportamental da base.",
+        "accent",
+    )
+    st.markdown(f"""<div class="info-box">
+      💡 <b>Assinantes ativos</b> representam 24,5% das sessões mas respondem por
+      <b>35,1% da receita total</b>. Usuários reativados convertem 2,3× mais que novos —
+      campanhas de reativação com ROI positivo.
+    </div>""", unsafe_allow_html=True)
+
+    seg_data = {
+        "Segmento":   ["Novos usuários", "Recorrentes", "Reativados", "Assinantes"],
+        "Sessões":    [28400, 52200, 13400, 23000],
+        "Conv. (%)":  [1.2, 2.8, 4.1, 5.9],
+        "Receita":    [8400, 42600, 18200, 25000],
+    }
+    fig_seg = go.Figure()
+    seg_colors = [ORANGE, PINK, PURPLE, GREEN]
+    for i, (seg, cv) in enumerate(zip(seg_data["Segmento"], seg_data["Conv. (%)"])):
+        fig_seg.add_trace(go.Bar(
+            name=seg, x=[seg], y=[cv],
+            marker_color=seg_colors[i],
+            text=[f"{cv:.1f}%"], textposition="outside",
+            textfont=dict(family="JetBrains Mono", size=11),
+        ))
+    fig_seg.update_layout(**plotly_layout(
+        height=240,
+        showlegend=False,
+        barmode="group",
+        bargap=0.38,
+    ))
+    fig_seg.update_yaxes(ticksuffix="%", title="Taxa de Conversão")
+    st.plotly_chart(fig_seg, width="stretch", config=cfg)
+
+    spacer()
+    section("Como a base está distribuída hoje")
     cd1, cd2, cd3 = st.columns(3)
 
     def dim_block(col, title: str, items: list):
@@ -1426,37 +1497,6 @@ with tab3:
         ("Recorrentes",     52200, PINK),
         ("Reativados",      13400, PURPLE),
     ])
-
-    section("Conexão audiência → receita")
-    st.markdown(f"""<div class="info-box">
-      💡 <b>Assinantes ativos</b> representam 24,5% das sessões mas respondem por
-      <b>35,1% da receita total</b>. Usuários reativados convertem 2,3× mais que novos —
-      campanhas de reativação com ROI positivo.
-    </div>""", unsafe_allow_html=True)
-
-    seg_data = {
-        "Segmento":   ["Novos usuários", "Recorrentes", "Reativados", "Assinantes"],
-        "Sessões":    [28400, 52200, 13400, 23000],
-        "Conv. (%)":  [1.2, 2.8, 4.1, 5.9],
-        "Receita":    [8400, 42600, 18200, 25000],
-    }
-    fig_seg = go.Figure()
-    seg_colors = [ORANGE, PINK, PURPLE, GREEN]
-    for i, (seg, cv) in enumerate(zip(seg_data["Segmento"], seg_data["Conv. (%)"])):
-        fig_seg.add_trace(go.Bar(
-            name=seg, x=[seg], y=[cv],
-            marker_color=seg_colors[i],
-            text=[f"{cv:.1f}%"], textposition="outside",
-            textfont=dict(family="JetBrains Mono", size=11),
-        ))
-    fig_seg.update_layout(**plotly_layout(
-        height=240,
-        showlegend=False,
-        barmode="group",
-        bargap=0.38,
-    ))
-    fig_seg.update_yaxes(ticksuffix="%", title="Taxa de Conversão")
-    st.plotly_chart(fig_seg, width="stretch", config=cfg)
 
 
 # ───────────────────────────────────────────────────────────────
@@ -1601,12 +1641,18 @@ with tab5:
     with kch4: st.markdown(kpi("Ticket médio geral",    fmt_brl(84.6),               2.1,  accent=PURPLE), unsafe_allow_html=True)
 
     spacer()
+    section("Onde perdemos conversão ao longo do checkout")
+    takeaway(
+        "<strong>Takeaway:</strong> a leitura desta aba foi reorganizada para seguir a sequência real da jornada: "
+        "perda no funil, recuperação, meio de pagamento, ticket incremental e perfil de conversão.",
+        "accent",
+    )
 
     cc1, cc2 = st.columns(2)
 
     # ── Traditional cart funnel ─────────────────────────────────
     with cc1:
-        section("Funil — Carrinho tradicional")
+        section("Carrinho tradicional")
         fig_ct = go.Figure(go.Funnel(
             y=[r[0] for r in CART_TRAD],
             x=[r[1] for r in CART_TRAD],
@@ -1634,7 +1680,7 @@ with tab5:
 
     # ── Quick buy funnel ────────────────────────────────────────
     with cc2:
-        section("Funil — Compra rápida")
+        section("Compra rápida")
         fig_cq = go.Figure(go.Funnel(
             y=[r[0] for r in CART_QUICK[:4]],
             x=[r[1] for r in CART_QUICK[:4]],
@@ -1653,7 +1699,7 @@ with tab5:
           ({CART_QUICK[5][2]:.1f}% das falhas).
         </div>""", unsafe_allow_html=True)
 
-        section("Recuperação de carrinhos abandonados")
+        section("O que recupera receita após abandono")
         rec_items = [
             ("Carrinhos elegíveis",   f"{ABAND_ELIG:,}",             TEXT),
             ("Mensagens enviadas",    f"{MSGS_SENT:,}",              TEXT),
@@ -1668,11 +1714,12 @@ with tab5:
 
     # ── Payment + Product conversion ────────────────────────────
     spacer()
+    section("O que mais ajuda a fechar e ampliar ticket")
     cp1, cp2 = st.columns(2)
 
     with cp1:
         best_payment = max(PAYMENTS, key=lambda item: item[2])
-        section(f"{best_payment[0]} é o meio com melhor conversão")
+        section(f"Meio de pagamento: {best_payment[0]} lidera a conversão")
         takeaway(
             f"<strong>Takeaway:</strong> {best_payment[0]} converte <strong>{best_payment[2] * 100:.1f}% </strong>, "
             "enquanto os demais meios aparecem como comparação de suporte.",
@@ -1701,7 +1748,7 @@ with tab5:
         st.plotly_chart(fig_pay, width="stretch", config=cfg)
 
     with cp2:
-        section("Conversão por produto — após adição ao carrinho")
+        section("Produtos com maior conversão após adição ao carrinho")
         sorted_p = sorted(PRODS, key=lambda x: x["conv"], reverse=True)
         fig_pcv = go.Figure(go.Bar(
             x=[p["name"] for p in sorted_p],
@@ -1724,7 +1771,8 @@ with tab5:
         st.plotly_chart(fig_pcv, width="stretch", config=cfg)
 
     # ── Upsell vitrine ──────────────────────────────────────────
-    section("Performance da vitrine de upsell (carrinho)")
+    spacer()
+    section("Onde ampliamos ticket dentro do carrinho")
     cu1, cu2, cu3, cu4 = st.columns(4)
     with cu1: st.markdown(kpi("Taxa de adição",     "31,4%",         2.8, accent=PURPLE), unsafe_allow_html=True)
     with cu2: st.markdown(kpi("Impacto no ticket",  "+R$ 18,60",  None,   accent=PINK),   unsafe_allow_html=True)
@@ -1732,7 +1780,8 @@ with tab5:
     with cu4: st.markdown(kpi("Receita incremental",fmt_brl(17633), None,  accent=PURPLE), unsafe_allow_html=True)
 
     # ── Segmentation deep-dives ─────────────────────────────────
-    section("Segmentações de conversão")
+    spacer()
+    section("Quem converte melhor no checkout")
     cs1, cs2, cs3 = st.columns(3)
 
     seg_comercial = [
@@ -1772,3 +1821,129 @@ with tab5:
     conv_seg_block(cs1, "Por perfil comercial",    seg_comercial)
     conv_seg_block(cs2, "Por perfil de engajamento", seg_engagement)
     conv_seg_block(cs3, "Por safra de cadastro",   seg_safra)
+
+
+# ───────────────────────────────────────────────────────────────
+#  TAB 6 — FORECAST
+# ───────────────────────────────────────────────────────────────
+with tab6:
+    next_month_growth = (REV_FORECAST_BASE[0] - REV_MONTH_HIST[-1]) / REV_MONTH_HIST[-1] * 100
+    sixth_month_growth = (REV_FORECAST_BASE[-1] - REV_MONTH_HIST[-1]) / REV_MONTH_HIST[-1] * 100
+    base_6m = sum(REV_FORECAST_BASE)
+    hist_6m = sum(REV_MONTH_HIST)
+    acc_growth = (base_6m - hist_6m) / hist_6m * 100
+    gap_to_target = (sum(REV_FORECAST_BASE) - sum(REV_TARGET)) / sum(REV_TARGET) * 100
+
+    kf1, kf2, kf3, kf4 = st.columns(4)
+    with kf1: st.markdown(kpi("Receita proj. próximo mês", fmt_brl(REV_FORECAST_BASE[0]), next_month_growth, accent=PINK), unsafe_allow_html=True)
+    with kf2: st.markdown(kpi("Receita proj. 6º mês", fmt_brl(REV_FORECAST_BASE[-1]), sixth_month_growth, accent=PURPLE), unsafe_allow_html=True)
+    with kf3: st.markdown(kpi("Acumulado proj. 6 meses", fmt_brl(base_6m), acc_growth, accent=ORANGE), unsafe_allow_html=True)
+    with kf4: st.markdown(kpi("Gap p/ meta 6 meses", f"{gap_to_target:.1f}%", gap_to_target, good_if_positive=False, accent=GREEN), unsafe_allow_html=True)
+
+    spacer()
+
+    ff1, ff2 = st.columns([2.2, 1])
+    with ff1:
+        section("Receita deve seguir crescendo nos próximos 6 meses")
+        takeaway(
+            f"<strong>Takeaway:</strong> o cenário base projeta saída de <strong>{fmt_brl(REV_MONTH_HIST[-1])}</strong> "
+            f"em {MONTHS_HIST[-1]} para <strong>{fmt_brl(REV_FORECAST_BASE[-1])}</strong> em {MONTHS_FORECAST[-1]}, "
+            f"com faixa provável entre <strong>{fmt_brl(REV_FORECAST_LOW[-1])}</strong> e <strong>{fmt_brl(REV_FORECAST_HIGH[-1])}</strong>.",
+            "good",
+        )
+        fig_fc = go.Figure()
+        fig_fc.add_trace(go.Bar(
+            x=MONTHS_HIST,
+            y=REV_MONTH_HIST,
+            name="Realizado",
+            marker_color=TRACK_STRONG,
+            hovertemplate="Realizado: R$ %{y:,.0f}<extra></extra>",
+        ))
+        fig_fc.add_trace(go.Scatter(
+            x=MONTHS_FORECAST,
+            y=REV_FORECAST_LOW,
+            mode="lines",
+            line=dict(color=rgba(PURPLE, 0.12), width=1),
+            hoverinfo="skip",
+            showlegend=False,
+        ))
+        fig_fc.add_trace(go.Scatter(
+            x=MONTHS_FORECAST,
+            y=REV_FORECAST_HIGH,
+            mode="lines",
+            line=dict(color=rgba(PURPLE, 0.12), width=1),
+            fill="tonexty",
+            fillcolor=PURPLE_SOFT,
+            name="Faixa provável",
+            hovertemplate="Máximo esperado: R$ %{y:,.0f}<extra></extra>",
+        ))
+        fig_fc.add_trace(go.Scatter(
+            x=MONTHS_FORECAST,
+            y=REV_FORECAST_BASE,
+            mode="lines+markers",
+            name="Cenário base",
+            line=dict(color=PINK, width=2.5),
+            marker=dict(size=7, color=PINK, line=dict(color=CARD, width=1.5)),
+            hovertemplate="Base: R$ %{y:,.0f}<extra></extra>",
+        ))
+        fig_fc.add_trace(go.Scatter(
+            x=MONTHS_FORECAST,
+            y=REV_TARGET,
+            mode="lines",
+            name="Meta",
+            line=dict(color=GREEN, width=2, dash="dash"),
+            hovertemplate="Meta: R$ %{y:,.0f}<extra></extra>",
+        ))
+        fig_fc.update_layout(**plotly_layout(height=320, barmode="overlay"))
+        fig_fc.update_yaxes(tickprefix="R$ ", tickformat=",.0f")
+        st.plotly_chart(fig_fc, width="stretch", config=cfg)
+
+    with ff2:
+        retain_share = np.mean([r / b for r, b in zip(REV_DRIVER_RETAIN, REV_FORECAST_BASE)]) * 100
+        new_share = np.mean([r / b for r, b in zip(REV_DRIVER_NEW, REV_FORECAST_BASE)]) * 100
+        upsell_share = np.mean([r / b for r, b in zip(REV_DRIVER_UPSELL, REV_FORECAST_BASE)]) * 100
+        section("Hipóteses que sustentam o forecast")
+        for lbl, val, color in [
+            ("Receita de retenção", f"{retain_share:.0f}% da base", PURPLE),
+            ("Nova receita", f"{new_share:.0f}% da base", PINK),
+            ("Upsell e expansão", f"{upsell_share:.0f}% da base", ORANGE),
+            ("Principal risco", "renovação abaixo da média", ORANGE),
+            ("Principal alavanca", "reativação + CRM próprio", GREEN),
+        ]:
+            st.markdown(f"""<div class="band">
+              <div class="band-label">{lbl}</div>
+              <div class="band-val" style="color:{color};">{val}</div>
+            </div>""", unsafe_allow_html=True)
+
+    spacer()
+    section("O que sustenta a projeção mês a mês")
+    takeaway(
+        "<strong>Takeaway:</strong> a retenção continua sendo a maior parte da receita projetada, "
+        "mas o avanço ao longo dos meses depende do ganho em nova receita e do incremento de upsell.",
+        "accent",
+    )
+    fig_drv = go.Figure()
+    fig_drv.add_trace(go.Bar(
+        x=MONTHS_FORECAST,
+        y=REV_DRIVER_RETAIN,
+        name="Retenção",
+        marker_color=PURPLE,
+        hovertemplate="Retenção: R$ %{y:,.0f}<extra></extra>",
+    ))
+    fig_drv.add_trace(go.Bar(
+        x=MONTHS_FORECAST,
+        y=REV_DRIVER_NEW,
+        name="Nova receita",
+        marker_color=PINK,
+        hovertemplate="Nova receita: R$ %{y:,.0f}<extra></extra>",
+    ))
+    fig_drv.add_trace(go.Bar(
+        x=MONTHS_FORECAST,
+        y=REV_DRIVER_UPSELL,
+        name="Upsell",
+        marker_color=ORANGE,
+        hovertemplate="Upsell: R$ %{y:,.0f}<extra></extra>",
+    ))
+    fig_drv.update_layout(**plotly_layout(height=300, barmode="stack", bargap=0.3))
+    fig_drv.update_yaxes(tickprefix="R$ ", tickformat=",.0f")
+    st.plotly_chart(fig_drv, width="stretch", config=cfg)
