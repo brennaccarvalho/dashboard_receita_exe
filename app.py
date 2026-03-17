@@ -646,9 +646,7 @@ with tab1:
             x=0.5, y=0.5, showarrow=False,
             font=dict(color=TEXT, size=14, family="JetBrains Mono"),
         )
-        fig_mix.update_layout(**plotly_theme(), height=265, showlegend=True,
-                               legend=dict(orientation="v", x=0.75, y=0.5,
-                                           font=dict(size=11)))
+        fig_mix.update_layout(**plotly_theme(), height=265, showlegend=True)
         st.plotly_chart(fig_mix, use_container_width=True, config=cfg)
 
     # Product table + Subscriptions
