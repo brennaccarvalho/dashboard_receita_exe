@@ -1,4 +1,4 @@
-"""
+﻿"""
 Analytics Dashboard
 Weekly Performance Report
 """
@@ -33,17 +33,17 @@ THEME_MODE = st.sidebar.radio(
 def get_tokens(mode: str) -> dict:
     if mode == "Claro":
         return {
-            "NAVY": "#5b4e6e",
-            "PURPLE": "#760681",
-            "PINK": "#CE008D",
-            "ORANGE": "#EF4D03",
-            "BG": "#F9F5EF",
-            "CARD": "#FFFFFF",
-            "CARD2": "#F4EEE2",
-            "TEXT": "#1F1F1F",
-            "MUTED": "#5C5C6C",
-            "GREEN": "#1E7E34",
-            "RED_SOFT": "#d64545",
+            "NAVY": "#2d2d3d",
+            "PURPLE": "#5c0068",
+            "PINK": "#a80070",
+            "ORANGE": "#c45a00",
+            "BG": "#f9f5ef",
+            "CARD": "#fefdfb",
+            "CARD2": "#f0ebe6",
+            "TEXT": "#0d0d0d",
+            "MUTED": "#4a4a56",
+            "GREEN": "#0d5d1a",
+            "RED_SOFT": "#b53a3a",
         }
 
     # dark mode (default)
@@ -374,15 +374,14 @@ def plotly_theme() -> dict:
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(family="Figtree, sans-serif", color=TEXT, size=12),
-        xaxis=dict(gridcolor="rgba(255,255,255,0.06)",
-                   linecolor="rgba(255,255,255,0.08)",
+        xaxis=dict(gridcolor="rgba(128,128,128,0.1)",
+                   linecolor="rgba(128,128,128,0.15)",
                    tickfont=dict(size=11)),
-        yaxis=dict(gridcolor="rgba(255,255,255,0.06)",
-                   linecolor="rgba(255,255,255,0.08)",
+        yaxis=dict(gridcolor="rgba(128,128,128,0.1)",
+                   linecolor="rgba(128,128,128,0.15)",
                    tickfont=dict(size=11)),
-        margin=dict(l=8, r=8, t=30, b=8),
         hoverlabel=dict(bgcolor=NAVY, font=dict(family="Figtree", size=12),
-                        bordercolor="rgba(255,255,255,0.15)"),
+                        bordercolor="rgba(0,0,0,0.15)"),
     )
 
 cfg = {"displayModeBar": False, "responsive": True}
@@ -418,14 +417,14 @@ SUBS_VENCE  = {"30d": 118, "60d": 204, "90d": 337}
 
 # ── Products ─────────────────────────────────────────────────
 PRODS = [
-    {"name": "Mapa Astral",           "price": 89.99, "ini": 312, "conc": 198},
-    {"name": "Tarot e o Amor",        "price": 39.95, "ini": 487, "conc": 362},
-    {"name": "Clube Premium",         "price": 330.00,"ini": 88,  "conc": 41 },
-    {"name": "Revolução Solar",       "price": 69.29, "ini": 224, "conc": 142},
-    {"name": "Previsões da sua Vida", "price": 69.87, "ini": 195, "conc": 114},
-    {"name": "Tarot Mensal",          "price": 39.95, "ini": 318, "conc": 253},
-    {"name": "Sinastria Amorosa",     "price": 59.93, "ini": 147, "conc": 88 },
-    {"name": "Mapa do Ano / Tarot",   "price": 69.29, "ini": 178, "conc": 109},
+    {"name": "Produto A", "price": 89.99, "ini": 312, "conc": 198},
+    {"name": "Produto B", "price": 39.95, "ini": 487, "conc": 362},
+    {"name": "Produto C", "price": 330.00,"ini": 88,  "conc": 41 },
+    {"name": "Produto D", "price": 69.29, "ini": 224, "conc": 142},
+    {"name": "Produto E", "price": 69.87, "ini": 195, "conc": 114},
+    {"name": "Produto F", "price": 39.95, "ini": 318, "conc": 253},
+    {"name": "Produto G", "price": 59.93, "ini": 147, "conc": 88 },
+    {"name": "Produto H", "price": 69.29, "ini": 178, "conc": 109},
 ]
 for p in PRODS:
     p["conv"]   = p["conc"] / p["ini"]
@@ -518,9 +517,8 @@ def get_data(use_mock: bool = True) -> dict:
     if use_mock:
         return _MOCK_DATA
 
-    st.warning(
-        "Modo conectado: dados reais não configurados. "
-        "Implemente get_data(use_mock=False) para carregar dados reais."
+    st.info(
+        "⚠️ Modo conectado: nesse momento não há conexão de dados reais, use o modo mock para visualizar o dash completo."
     )
 
     # TODO: carregue dados reais aqui, mantendo as mesmas chaves/variáveis.
@@ -740,8 +738,7 @@ with tab1:
         fig_ren.add_hline(y=RENEW_12M * 100, line_dash="dot", line_color=MUTED,
                           annotation_text="média 12m",
                           annotation_font_color=MUTED, annotation_font_size=10)
-        fig_ren.update_layout(**plotly_theme(), height=165, showlegend=False,
-                               margin=dict(l=0, r=0, t=8, b=0))
+        fig_ren.update_layout(**plotly_theme(), height=165, showlegend=False)
         fig_ren.update_yaxes(ticksuffix="%", range=[65, 100])
         st.plotly_chart(fig_ren, use_container_width=True, config=cfg)
 
@@ -1035,8 +1032,7 @@ with tab4:
             connector=dict(line=dict(color="rgba(255,255,255,0.08)", width=1)),
             textfont=dict(family="JetBrains Mono", size=11, color=TEXT),
         ))
-        fig_fnn.update_layout(**plotly_theme(), height=280,
-                               margin=dict(l=0, r=0, t=10, b=0))
+        fig_fnn.update_layout(**plotly_theme(), height=280)
         st.plotly_chart(fig_fnn, use_container_width=True, config=cfg)
 
     with cf2:
@@ -1076,7 +1072,6 @@ with tab4:
                           annotation_text="meta 60",
                           annotation_font_color=MUTED, annotation_font_size=10)
         fig_sc.update_layout(**plotly_theme(), height=190, showlegend=False,
-                              margin=dict(l=0, r=0, t=8, b=0),
                               title=dict(text="Evolução do score médio",
                                          font=dict(size=11, color=MUTED)))
         fig_sc.update_yaxes(range=[50, 78])
@@ -1143,8 +1138,7 @@ with tab5:
             connector=dict(line=dict(color="rgba(255,255,255,0.08)", width=1)),
             textfont=dict(family="JetBrains Mono", size=11, color=TEXT),
         ))
-        fig_ct.update_layout(**plotly_theme(), height=290,
-                              margin=dict(l=0, r=0, t=10, b=0))
+        fig_ct.update_layout(**plotly_theme(), height=290)
         st.plotly_chart(fig_ct, use_container_width=True, config=cfg)
 
         for label, val, conv, aband in CART_TRAD[1:]:
@@ -1172,8 +1166,7 @@ with tab5:
             connector=dict(line=dict(color="rgba(255,255,255,0.08)", width=1)),
             textfont=dict(family="JetBrains Mono", size=11, color=TEXT),
         ))
-        fig_cq.update_layout(**plotly_theme(), height=290,
-                              margin=dict(l=0, r=0, t=10, b=0))
+        fig_cq.update_layout(**plotly_theme(), height=290)
         st.plotly_chart(fig_cq, use_container_width=True, config=cfg)
 
         st.markdown(f"""<div class="alert-box">
