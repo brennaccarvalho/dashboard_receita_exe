@@ -1,0 +1,52 @@
+# ── Python ──────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Virtual environments ─────────────────
+.env
+.venv
+env/
+venv/
+ENV/
+
+# ── Streamlit ────────────────────────────
+.streamlit/secrets.toml
+
+# ── Dados sensíveis ──────────────────────
+data/raw/
+data/private/
+*.csv
+*.xlsx
+*.parquet
+*.db
+*.sqlite
+*.sqlite3
+!data/sample/*.csv
+
+# ── IDEs / editores ──────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Logs ─────────────────────────────────
+*.log
+logs/
+
+# ── Coverage / testes ────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ── Jupyter ──────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
