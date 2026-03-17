@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 #  PAGE CONFIG  (must be first Streamlit call)
 # ═══════════════════════════════════════════════════════════════
 st.set_page_config(
-    page_title="Analytics Dashboard",
+    page_title="Dashboard de Performance",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -33,32 +33,46 @@ THEME_MODE = st.sidebar.radio(
 def get_tokens(mode: str) -> dict:
     if mode == "Claro":
         return {
-            "NAVY": "#3a3a45",
-            "PURPLE": "#4a1f61",
-            "PINK": "#8b1f56",
-            "ORANGE": "#a84000",
-            "BG": "#faf8f3",
-            "CARD": "#ffffff",
-            "CARD2": "#f5f1eb",
-            "TEXT": "#1a1a1a",
-            "MUTED": "#6a6a7a",
-            "GREEN": "#1a6b2a",
-            "RED_SOFT": "#a54a4a",
+            "NAVY": "#24324A",
+            "PURPLE": "#5D3FD3",
+            "PINK": "#B53C74",
+            "ORANGE": "#C96822",
+            "BG": "#F4EDE3",
+            "CARD": "#FFF9F1",
+            "CARD2": "#F0E5D6",
+            "TEXT": "#201A15",
+            "MUTED": "#6F6258",
+            "GREEN": "#2E8B57",
+            "RED_SOFT": "#C95E5E",
+            "SIDEBAR_BG": "#1B2538",
+            "SIDEBAR_TEXT": "#F7F2EA",
+            "BORDER": "#DACDBE",
+            "BORDER_SOFT": "#E8DED2",
+            "GRID": "#D9CCBE",
+            "TABLE_HEAD": "#F3EADF",
+            "SHADOW": "rgba(56, 38, 20, 0.10)",
         }
 
     # dark mode (default)
     return {
-        "NAVY": "#6b6b8f",
-        "PURPLE": "#a442c9",
-        "PINK": "#CE008D",
-        "ORANGE": "#EF4D03",
-        "BG": "#0b0d1f",
-        "CARD": "#13162e",
-        "CARD2": "#1a1e3c",
-        "TEXT": "#dde0f2",
-        "MUTED": "#6b6f8e",
-        "GREEN": "#4ade80",
-        "RED_SOFT": "#f87171",
+        "NAVY": "#0D1B2E",
+        "PURPLE": "#9A6BFF",
+        "PINK": "#FF5CA8",
+        "ORANGE": "#FF8A3D",
+        "BG": "#07111D",
+        "CARD": "#101B2D",
+        "CARD2": "#17243A",
+        "TEXT": "#ECF3FF",
+        "MUTED": "#95A4BF",
+        "GREEN": "#53D39B",
+        "RED_SOFT": "#FF7E7E",
+        "SIDEBAR_BG": "#091221",
+        "SIDEBAR_TEXT": "#F3F7FF",
+        "BORDER": "#243550",
+        "BORDER_SOFT": "#1E2A40",
+        "GRID": "#30415C",
+        "TABLE_HEAD": "#142033",
+        "SHADOW": "rgba(0, 0, 0, 0.26)",
     }
 
 _tokens = get_tokens(THEME_MODE)
@@ -73,6 +87,30 @@ TEXT = _tokens["TEXT"]
 MUTED = _tokens["MUTED"]
 GREEN = _tokens["GREEN"]
 RED_SOFT = _tokens["RED_SOFT"]
+SIDEBAR_BG = _tokens["SIDEBAR_BG"]
+SIDEBAR_TEXT = _tokens["SIDEBAR_TEXT"]
+BORDER = _tokens["BORDER"]
+BORDER_SOFT = _tokens["BORDER_SOFT"]
+GRID = _tokens["GRID"]
+TABLE_HEAD = _tokens["TABLE_HEAD"]
+SHADOW = _tokens["SHADOW"]
+
+
+def rgba(hex_color: str, alpha: float) -> str:
+    hex_color = hex_color.lstrip("#")
+    r, g, b = (int(hex_color[i:i + 2], 16) for i in (0, 2, 4))
+    return f"rgba({r}, {g}, {b}, {alpha})"
+
+
+TRACK = rgba(TEXT, 0.08)
+TRACK_STRONG = rgba(TEXT, 0.12)
+PURPLE_SOFT = rgba(PURPLE, 0.14)
+PINK_SOFT = rgba(PINK, 0.14)
+ORANGE_SOFT = rgba(ORANGE, 0.14)
+GREEN_SOFT = rgba(GREEN, 0.14)
+SIDEBAR_PANEL = rgba(SIDEBAR_TEXT, 0.06)
+SIDEBAR_PANEL_STRONG = rgba(SIDEBAR_TEXT, 0.10)
+SIDEBAR_BORDER = rgba(SIDEBAR_TEXT, 0.16)
 
 # ═══════════════════════════════════════════════════════════════
 #  GLOBAL CSS
@@ -80,61 +118,175 @@ RED_SOFT = _tokens["RED_SOFT"]
 st.markdown(f"""
 <style>
 /* ── Google Fonts ───────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-@font-face {{
-  font-family: 'Aconchego';
-  src: local('Aconchego'), local('Aconchego-Regular');
-  font-weight: normal; font-style: normal;
-}}
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /* ── Base ───────────────────────────────────────── */
 *, *::before, *::after {{ box-sizing: border-box; }}
 
 html, body, [class*="css"], .stApp, .main {{
   font-family: 'Figtree', sans-serif !important;
-  background-color: {BG} !important;
   color: {TEXT} !important;
 }}
 
+[data-testid="stAppViewContainer"], .stApp {{
+  background:
+    radial-gradient(circle at top right, {rgba(PURPLE, 0.16)}, transparent 28%),
+    radial-gradient(circle at top left, {rgba(ORANGE, 0.12)}, transparent 22%),
+    linear-gradient(180deg, {BG} 0%, {CARD2} 135%) !important;
+  background-attachment: fixed;
+}}
+
+[data-testid="stHeader"] {{
+  background: transparent !important;
+}}
+
 h1, h2, h3, h4 {{
-  font-family: 'Aconchego', 'Georgia', serif !important;
-  font-weight: normal !important;
+  font-family: 'Cormorant Garamond', 'Georgia', serif !important;
+  font-weight: 600 !important;
   color: {TEXT} !important;
 }}
 
 /* ── Hide Streamlit chrome ──────────────────────── */
 #MainMenu, footer, .stDeployButton {{ visibility: hidden; }}
 .block-container {{
-  padding: 1.8rem 2rem 3rem 2rem !important;
-  max-width: 1440px !important;
+  padding: 1.5rem 1.8rem 3rem 1.8rem !important;
+  max-width: 1460px !important;
 }}
 
 /* ── Sidebar ────────────────────────────────────── */
 [data-testid="stSidebar"] > div:first-child {{
-  background: {NAVY} !important;
-  border-right: 1px solid rgba(255,255,255,0.05);
+  background: linear-gradient(180deg, {SIDEBAR_BG} 0%, {NAVY} 100%) !important;
+  border-right: 1px solid {SIDEBAR_BORDER};
 }}
 [data-testid="stSidebar"] * {{
-  color: {TEXT} !important;
+  color: {SIDEBAR_TEXT} !important;
+}}
+[data-testid="stSidebar"] [data-baseweb="select"] > div {{
+  background: {SIDEBAR_PANEL} !important;
+  border-color: {SIDEBAR_BORDER} !important;
+  border-radius: 12px !important;
+}}
+[data-testid="stSidebar"] .stSelectbox label,
+[data-testid="stSidebar"] .stRadio label,
+[data-testid="stSidebar"] .stCheckbox label {{
+  color: {rgba(SIDEBAR_TEXT, 0.72)} !important;
+}}
+[data-testid="stSidebar"] div[role="radiogroup"] {{
+  gap: 0.35rem;
+}}
+[data-testid="stSidebar"] div[role="radiogroup"] label {{
+  background: {SIDEBAR_PANEL};
+  border: 1px solid {rgba(SIDEBAR_TEXT, 0.08)};
+  border-radius: 12px;
+  padding: 0.42rem 0.55rem;
+}}
+[data-testid="stSidebar"] .stCheckbox > label {{
+  padding-top: 0.35rem;
+}}
+.sidebar-panel {{
+  background: {SIDEBAR_PANEL};
+  border: 1px solid {SIDEBAR_BORDER};
+  border-radius: 16px;
+  padding: 14px 15px;
+  box-shadow: inset 0 1px 0 {rgba(SIDEBAR_TEXT, 0.05)};
+}}
+.sidebar-kicker {{
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: {rgba(SIDEBAR_TEXT, 0.72)};
+  margin-bottom: 10px;
+}}
+.status-row {{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}}
+.status-row:last-child {{ margin-bottom: 0; }}
+.status-dot {{
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}}
+.status-text {{
+  font-size: 12px;
+  color: {SIDEBAR_TEXT};
+}}
+
+/* ── Context strip ──────────────────────────────── */
+.context-strip {{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: -0.55rem 0 1.1rem 0;
+}}
+.context-chip {{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.68rem 0.85rem;
+  border-radius: 16px;
+  border: 1px solid {BORDER};
+  background: {rgba(CARD, 0.86)};
+  box-shadow: 0 12px 26px {SHADOW};
+  min-width: 172px;
+}}
+.context-chip.good {{
+  border-color: {rgba(GREEN, 0.32)};
+  background: linear-gradient(135deg, {rgba(CARD, 0.94)} 0%, {GREEN_SOFT} 130%);
+}}
+.context-chip.alert {{
+  border-color: {rgba(ORANGE, 0.32)};
+  background: linear-gradient(135deg, {rgba(CARD, 0.94)} 0%, {ORANGE_SOFT} 130%);
+}}
+.context-chip.accent {{
+  border-color: {rgba(PURPLE, 0.32)};
+  background: linear-gradient(135deg, {rgba(CARD, 0.94)} 0%, {PURPLE_SOFT} 130%);
+}}
+.context-dot {{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}}
+.context-copy {{
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}}
+.context-label {{
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: {MUTED};
+}}
+.context-value {{
+  font-size: 13px;
+  color: {TEXT};
+  font-weight: 600;
 }}
 
 /* ── Tabs ───────────────────────────────────────── */
 .stTabs [data-baseweb="tab-list"] {{
-  background: {NAVY};
-  border-radius: 12px;
-  padding: 5px;
-  gap: 3px;
-  border: 1px solid rgba(255,255,255,0.06);
-  flex-wrap: nowrap;
+  background: {rgba(CARD, 0.84)};
+  border-radius: 18px;
+  padding: 6px;
+  gap: 5px;
+  border: 1px solid {BORDER};
+  box-shadow: 0 10px 24px {SHADOW};
+  flex-wrap: wrap;
+  backdrop-filter: blur(10px);
+  margin-bottom: 0.2rem;
 }}
 .stTabs [data-baseweb="tab"] {{
   font-family: 'Figtree', sans-serif;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: {MUTED};
-  border-radius: 8px;
-  padding: 8px 20px;
+  border-radius: 12px;
+  padding: 10px 18px;
   border: none !important;
   background: transparent !important;
   white-space: nowrap;
@@ -143,6 +295,7 @@ h1, h2, h3, h4 {{
   background: linear-gradient(135deg, {PURPLE}, {PINK}) !important;
   color: #fff !important;
   font-weight: 600 !important;
+  box-shadow: 0 10px 18px {rgba(PURPLE, 0.22)};
 }}
 .stTabs [data-baseweb="tab-panel"] {{
   background: transparent !important;
@@ -153,22 +306,34 @@ h1, h2, h3, h4 {{
 /* ── KPI Card ───────────────────────────────────── */
 .kpi-card {{
   background: {CARD};
-  border-radius: 14px;
+  border-radius: 18px;
   padding: 18px 20px 16px 20px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid {BORDER};
   height: 110px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 14px 30px {SHADOW};
+  backdrop-filter: blur(6px);
 }}
 .kpi-card::before {{
   content: '';
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 3px;
-  border-radius: 0 0 14px 14px;
+  height: 4px;
+  border-radius: 0 0 18px 18px;
+}}
+.kpi-card::after {{
+  content: '';
+  position: absolute;
+  top: -32px;
+  right: -20px;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: {rgba(PURPLE, 0.08)};
 }}
 .kpi-label {{
   font-size: 10.5px;
@@ -203,24 +368,30 @@ h1, h2, h3, h4 {{
 
 /* ── Section Title ──────────────────────────────── */
 .sec-title {{
-  font-family: 'Aconchego', 'Georgia', serif;
-  font-size: 17px;
-  font-weight: normal;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 24px;
+  font-weight: 600;
   color: {TEXT};
-  margin: 1.4rem 0 0.75rem 0;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  margin: 1.5rem 0 0.85rem 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid {BORDER};
 }}
 
 /* ── Data Table ─────────────────────────────────── */
 .dtable {{
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 12.5px;
   font-family: 'Figtree', sans-serif;
+  background: {CARD};
+  border: 1px solid {BORDER};
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 14px 30px {SHADOW};
 }}
 .dtable th {{
-  background: rgba(255,255,255,0.03);
+  background: {TABLE_HEAD};
   color: {MUTED};
   font-size: 10px;
   text-transform: uppercase;
@@ -228,34 +399,35 @@ h1, h2, h3, h4 {{
   padding: 10px 14px;
   text-align: left;
   font-weight: 600;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid {BORDER};
 }}
 .dtable td {{
   padding: 9px 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid {BORDER_SOFT};
   color: {TEXT};
   vertical-align: middle;
 }}
 .dtable tr:last-child td {{ border-bottom: none; }}
-.dtable tr:hover td {{ background: rgba(255,255,255,0.02); }}
+.dtable tr:hover td {{ background: {rgba(PURPLE, 0.04)}; }}
 .mono {{ font-family: 'JetBrains Mono', monospace; font-size: 12px; }}
 
 /* ── Badges ─────────────────────────────────────── */
-.bg {{ background:rgba(74,222,128,.14); color:{GREEN}; padding:2px 8px; border-radius:4px; font-size:11px; font-family:'JetBrains Mono',monospace; }}
-.bo {{ background:rgba(239,77,3,.14); color:{ORANGE}; padding:2px 8px; border-radius:4px; font-size:11px; font-family:'JetBrains Mono',monospace; }}
-.bp {{ background:rgba(118,6,129,.14); color:#d490e4; padding:2px 8px; border-radius:4px; font-size:11px; font-family:'JetBrains Mono',monospace; }}
-.bk {{ background:rgba(206,0,141,.14); color:{PINK}; padding:2px 8px; border-radius:4px; font-size:11px; font-family:'JetBrains Mono',monospace; }}
+.bg {{ background:{GREEN_SOFT}; color:{GREEN}; padding:2px 8px; border-radius:999px; font-size:11px; font-family:'JetBrains Mono',monospace; }}
+.bo {{ background:{ORANGE_SOFT}; color:{ORANGE}; padding:2px 8px; border-radius:999px; font-size:11px; font-family:'JetBrains Mono',monospace; }}
+.bp {{ background:{PURPLE_SOFT}; color:{PURPLE}; padding:2px 8px; border-radius:999px; font-size:11px; font-family:'JetBrains Mono',monospace; }}
+.bk {{ background:{PINK_SOFT}; color:{PINK}; padding:2px 8px; border-radius:999px; font-size:11px; font-family:'JetBrains Mono',monospace; }}
 
 /* ── Band Row ───────────────────────────────────── */
 .band {{
   background: {CARD};
-  border-radius: 9px;
+  border-radius: 14px;
   padding: 11px 16px;
-  margin-bottom: 5px;
+  margin-bottom: 7px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid rgba(255,255,255,0.04);
+  border: 1px solid {BORDER};
+  box-shadow: 0 10px 22px {SHADOW};
 }}
 .band-label {{ font-size: 12.5px; color: {TEXT}; }}
 .band-val {{ font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; }}
@@ -263,13 +435,14 @@ h1, h2, h3, h4 {{
 /* ── Funnel Row ─────────────────────────────────── */
 .frow {{
   background: {CARD};
-  border-radius: 10px;
+  border-radius: 16px;
   padding: 13px 16px;
-  margin-bottom: 5px;
+  margin-bottom: 7px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-left: 3px solid transparent;
+  box-shadow: 0 10px 22px {SHADOW};
 }}
 .frow-label {{ font-size: 12.5px; font-weight: 500; color: {TEXT}; }}
 .frow-sub   {{ font-size: 10.5px; color: {MUTED}; font-family: 'JetBrains Mono', monospace; margin-top:2px; }}
@@ -278,29 +451,56 @@ h1, h2, h3, h4 {{
 
 /* ── Alert / Info ───────────────────────────────── */
 .alert-box {{
-  background: rgba(239,77,3,.10);
-  border: 1px solid rgba(239,77,3,.25);
-  border-radius: 9px;
+  background: {ORANGE_SOFT};
+  border: 1px solid {rgba(ORANGE, 0.28)};
+  border-radius: 14px;
   padding: 11px 15px;
   font-size: 12.5px;
-  color: #ffb08a;
+  color: {TEXT};
   margin-bottom: 10px;
+  box-shadow: 0 10px 20px {SHADOW};
 }}
 .info-box {{
-  background: rgba(118,6,129,.10);
-  border: 1px solid rgba(118,6,129,.25);
-  border-radius: 9px;
+  background: {PURPLE_SOFT};
+  border: 1px solid {rgba(PURPLE, 0.28)};
+  border-radius: 14px;
   padding: 11px 15px;
   font-size: 12.5px;
-  color: #d4a0de;
+  color: {TEXT};
   margin-bottom: 10px;
+  box-shadow: 0 10px 20px {SHADOW};
+}}
+.takeaway-note {{
+  margin: -0.15rem 0 0.8rem 0;
+  padding: 0.72rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid {BORDER};
+  background: {rgba(CARD, 0.82)};
+  color: {TEXT};
+  font-size: 12.5px;
+  line-height: 1.45;
+}}
+.takeaway-note strong {{
+  color: {TEXT};
+}}
+.takeaway-note.good {{
+  border-color: {rgba(GREEN, 0.32)};
+  background: linear-gradient(135deg, {rgba(CARD, 0.94)} 0%, {GREEN_SOFT} 130%);
+}}
+.takeaway-note.alert {{
+  border-color: {rgba(ORANGE, 0.32)};
+  background: linear-gradient(135deg, {rgba(CARD, 0.94)} 0%, {ORANGE_SOFT} 130%);
+}}
+.takeaway-note.accent {{
+  border-color: {rgba(PURPLE, 0.32)};
+  background: linear-gradient(135deg, {rgba(CARD, 0.94)} 0%, {PURPLE_SOFT} 130%);
 }}
 
 /* ── Bar mini ───────────────────────────────────── */
 .mini-bar-wrap {{
   flex: 1; margin: 0 14px;
   height: 5px;
-  background: rgba(255,255,255,.07);
+  background: {TRACK};
   border-radius: 3px;
   overflow: hidden;
 }}
@@ -309,8 +509,9 @@ h1, h2, h3, h4 {{
 /* ── Selectbox / inputs ─────────────────────────── */
 [data-baseweb="select"] > div {{
   background: {CARD2} !important;
-  border-color: rgba(255,255,255,0.1) !important;
-  border-radius: 8px !important;
+  border-color: {BORDER} !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
 }}
 .stSelectbox label, .stRadio label {{
   font-size: 11px !important;
@@ -327,12 +528,112 @@ div[role="radiogroup"] label {{
 }}
 
 /* ── Divider ────────────────────────────────────── */
-hr {{ border-color: rgba(255,255,255,0.07) !important; }}
+hr {{ border-color: {BORDER} !important; }}
 
 /* ── Scrollbar ──────────────────────────────────── */
 ::-webkit-scrollbar {{ width: 5px; height: 5px; }}
 ::-webkit-scrollbar-track {{ background: transparent; }}
-::-webkit-scrollbar-thumb {{ background: rgba(255,255,255,0.12); border-radius: 3px; }}
+::-webkit-scrollbar-thumb {{ background: {TRACK_STRONG}; border-radius: 3px; }}
+
+/* ── Header / hero ──────────────────────────────── */
+.hero-card {{
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.6rem;
+  padding: 1.5rem 1.7rem;
+  border-radius: 24px;
+  border: 1px solid {BORDER};
+  background:
+    linear-gradient(135deg, {rgba(CARD, 0.96)} 0%, {rgba(CARD2, 0.92)} 100%);
+  box-shadow: 0 18px 38px {SHADOW};
+}}
+.hero-card::after {{
+  content: '';
+  position: absolute;
+  inset: auto -40px -54px auto;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, {rgba(PURPLE, 0.22)}, {rgba(ORANGE, 0.18)});
+}}
+.hero-kicker {{
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: {MUTED};
+  margin-bottom: 8px;
+}}
+.hero-title {{
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  font-size: 38px;
+  line-height: 0.98;
+  color: {TEXT};
+}}
+.hero-meta {{
+  margin-top: 10px;
+  font-size: 13px;
+  color: {MUTED};
+}}
+.hero-meta .mono {{
+  font-size: 13px;
+}}
+
+/* ── Plotly surfaces ────────────────────────────── */
+div[data-testid="stPlotlyChart"] {{
+  background: {rgba(CARD, 0.82)};
+  border: 1px solid {BORDER};
+  border-radius: 20px;
+  padding: 0.45rem 0.55rem 0.35rem 0.55rem;
+  box-shadow: 0 16px 30px {SHADOW};
+  backdrop-filter: blur(8px);
+}}
+
+/* ── Responsive ─────────────────────────────────── */
+@media (max-width: 980px) {{
+  .block-container {{
+    padding: 1rem 1rem 2rem 1rem !important;
+  }}
+  .hero-title {{
+    font-size: 31px;
+  }}
+  .context-chip {{
+    min-width: 150px;
+    flex: 1 1 220px;
+  }}
+  .stTabs [data-baseweb="tab-list"] {{
+    gap: 0.4rem;
+  }}
+  .stTabs [data-baseweb="tab"] {{
+    padding: 0.75rem 0.95rem;
+  }}
+}}
+
+@media (max-width: 640px) {{
+  .hero-card {{
+    padding: 1.15rem 1rem;
+    border-radius: 20px;
+  }}
+  .hero-title {{
+    font-size: 26px;
+  }}
+  .hero-meta {{
+    font-size: 12px;
+    line-height: 1.5;
+  }}
+  .context-strip {{
+    gap: 0.5rem;
+  }}
+  .context-chip {{
+    min-width: 100%;
+  }}
+  .kpi-card {{
+    height: auto;
+    min-height: 110px;
+  }}
+  .sec-title {{
+    font-size: 21px;
+  }}
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -344,6 +645,15 @@ hr {{ border-color: rgba(255,255,255,0.07) !important; }}
 def fmt_brl(v: float) -> str:
     s = f"{abs(v):,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")
     return ("−" if v < 0 else "") + "R$ " + s
+
+
+def fmt_date_pt_br(value: datetime) -> str:
+    months = [
+        "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro",
+    ]
+    return f"{value.day:02d} de {months[value.month - 1]} de {value.year}"
+
 
 def fmt_k(v: float) -> str:
     if v >= 1_000_000: return f"{v/1_000_000:.1f}M"
@@ -369,20 +679,66 @@ def kpi(label: str, value: str, delta: float | None = None,
 def section(title: str) -> None:
     st.markdown(f'<div class="sec-title">{title}</div>', unsafe_allow_html=True)
 
+
+def takeaway(text: str, tone: str = "accent") -> None:
+    st.markdown(f'<div class="takeaway-note {tone}">{text}</div>', unsafe_allow_html=True)
+
+
+def context_chip(label: str, value: str, tone: str = "neutral", dot_color: str | None = None) -> str:
+    dot_color = dot_color or MUTED
+    return f"""
+    <div class="context-chip {tone}">
+      <div class="context-dot" style="background:{dot_color};"></div>
+      <div class="context-copy">
+        <div class="context-label">{label}</div>
+        <div class="context-value">{value}</div>
+      </div>
+    </div>
+    """
+
+
+def merge_nested_dict(base: dict, overrides: dict) -> dict:
+    merged = dict(base)
+    for key, value in overrides.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = {**merged[key], **value}
+        else:
+            merged[key] = value
+    return merged
+
+
 def plotly_theme() -> dict:
+    axis_defaults = dict(
+        gridcolor=GRID,
+        zerolinecolor=GRID,
+        linecolor=BORDER,
+        tickfont=dict(size=11, color=MUTED),
+        title=dict(font=dict(size=11, color=MUTED)),
+        automargin=True,
+    )
     return dict(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(family="Figtree, sans-serif", color=TEXT, size=12),
-        xaxis=dict(gridcolor="rgba(128,128,128,0.1)",
-                   linecolor="rgba(128,128,128,0.15)",
-                   tickfont=dict(size=11)),
-        yaxis=dict(gridcolor="rgba(128,128,128,0.1)",
-                   linecolor="rgba(128,128,128,0.15)",
-                   tickfont=dict(size=11)),
-        hoverlabel=dict(bgcolor=NAVY, font=dict(family="Figtree", size=12),
-                        bordercolor="rgba(0,0,0,0.15)"),
+        margin=dict(l=10, r=10, t=34, b=10),
+        xaxis={**axis_defaults, "gridcolor": "rgba(0,0,0,0)"},
+        yaxis=axis_defaults,
+        legend=dict(
+            font=dict(size=10, color=MUTED),
+            bgcolor="rgba(0,0,0,0)",
+            bordercolor="rgba(0,0,0,0)",
+        ),
+        hoverlabel=dict(
+            bgcolor=CARD2,
+            font=dict(family="Figtree", size=12, color=TEXT),
+            bordercolor=BORDER,
+        ),
     )
+
+
+def plotly_layout(**overrides) -> dict:
+    return merge_nested_dict(plotly_theme(), overrides)
+
 
 cfg = {"displayModeBar": False, "responsive": True}
 
@@ -541,52 +897,59 @@ globals().update(data)
 with st.sidebar:
     st.markdown(f"""
     <div style="text-align:center; padding:10px 0 10px 0;">
-      <h1 style="color:{TEXT}; margin:0; letter-spacing:0.02em;">Analytics</h1>
+      <h1 style="color:{SIDEBAR_TEXT}; margin:0; letter-spacing:0.02em;">Receita 360</h1>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"<div style='font-size:10px;color:{MUTED};text-transform:uppercase;"
+    st.markdown(f"<div style='font-size:10px;color:{rgba(SIDEBAR_TEXT, 0.72)};text-transform:uppercase;"
                 f"letter-spacing:.08em;margin-bottom:6px;'>Semana de referência</div>",
                 unsafe_allow_html=True)
-    week_sel = st.selectbox("", WEEKS, index=len(WEEKS) - 1, label_visibility="collapsed")
+    week_sel = st.selectbox(
+        "Semana de referência",
+        WEEKS,
+        index=len(WEEKS) - 1,
+        label_visibility="collapsed",
+    )
 
     st.markdown("<hr/>", unsafe_allow_html=True)
 
-    st.markdown(f"<div style='font-size:10px;color:{MUTED};text-transform:uppercase;"
+    st.markdown(f"<div style='font-size:10px;color:{rgba(SIDEBAR_TEXT, 0.72)};text-transform:uppercase;"
                 f"letter-spacing:.08em;margin-bottom:6px;'>Comparação</div>",
                 unsafe_allow_html=True)
-    compare = st.radio("", ["4 semanas anteriores", "Ano anterior (YoY)", "Ambos"],
-                       index=2, label_visibility="collapsed")
+    compare = st.radio(
+        "Comparação",
+        ["4 semanas anteriores", "Ano anterior (YoY)", "Ambos"],
+        index=2,
+        label_visibility="collapsed",
+    )
 
     st.markdown("<hr/>", unsafe_allow_html=True)
 
     # Status bullets
     st.markdown(f"""
-    <div style="background:{CARD}; border-radius:10px; padding:14px 15px;
-                border:1px solid rgba(255,255,255,.05);">
-      <div style="font-size:10px;color:{MUTED};text-transform:uppercase;
-                  letter-spacing:.08em;margin-bottom:10px;">Status da semana</div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-        <div style="width:7px;height:7px;border-radius:50%;background:{GREEN};flex-shrink:0;"></div>
-        <div style="font-size:12px;color:{TEXT};">Receita <b>+6,2%</b> vs meta</div>
+    <div class="sidebar-panel">
+      <div class="sidebar-kicker">Status da semana</div>
+      <div class="status-row">
+        <div class="status-dot" style="background:{GREEN};"></div>
+        <div class="status-text">Receita <b>+6,2%</b> vs meta</div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-        <div style="width:7px;height:7px;border-radius:50%;background:{ORANGE};flex-shrink:0;"></div>
-        <div style="font-size:12px;color:{TEXT};">Renovações abaixo da média</div>
+      <div class="status-row">
+        <div class="status-dot" style="background:{ORANGE};"></div>
+        <div class="status-text">Renovações abaixo da média</div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-        <div style="width:7px;height:7px;border-radius:50%;background:{PURPLE};flex-shrink:0;"></div>
-        <div style="font-size:12px;color:{TEXT};">Score de cadastros crescendo</div>
+      <div class="status-row">
+        <div class="status-dot" style="background:{PURPLE};"></div>
+        <div class="status-text">Score de cadastros crescendo</div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <div style="width:7px;height:7px;border-radius:50%;background:{PINK};flex-shrink:0;"></div>
-        <div style="font-size:12px;color:{TEXT};">Compra rápida: queda de falhas</div>
+      <div class="status-row">
+        <div class="status-dot" style="background:{PINK};"></div>
+        <div class="status-text">Compra rápida com menos falhas</div>
       </div>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("<hr/>", unsafe_allow_html=True)
-    st.markdown(f"<div style='font-size:10.5px;color:{MUTED};text-align:center;'>"
+    st.markdown(f"<div style='font-size:10.5px;color:{rgba(SIDEBAR_TEXT, 0.72)};text-align:center;'>"
                 f"Atualizado em {TODAY.strftime('%d/%m/%Y')}</div>",
                 unsafe_allow_html=True)
 
@@ -595,19 +958,37 @@ with st.sidebar:
 #  PAGE HEADER
 # ═══════════════════════════════════════════════════════════════
 st.markdown(f"""
-<div style="margin-bottom:1.6rem;">
-  <div style="font-family:'Aconchego','Georgia',serif; font-size:30px;
-              color:{TEXT}; line-height:1.2; font-weight:normal;">
-    Report Semanal de Performance
+<div class="hero-card">
+  <div class="hero-kicker">Painel executivo</div>
+  <div class="hero-title">
+    Dashboard semanal de receita e conversão
   </div>
-  <div style="font-size:13px; color:{MUTED}; margin-top:5px;">
+  <div class="hero-meta">
     Semana de referência:
-    <span style="color:{TEXT}; font-family:'JetBrains Mono',monospace;">{week_sel}</span>
+    <span class="mono" style="color:{TEXT};">{week_sel}</span>
     &nbsp;·&nbsp;
-    Gerado em {TODAY.strftime('%d de %B de %Y')}
+    Gerado em {fmt_date_pt_br(TODAY)}
   </div>
 </div>
 """, unsafe_allow_html=True)
+
+hero_chips = [
+    context_chip(
+        "Modo de dados",
+        "Mock para navegação completa" if USE_MOCK_DATA else "Conectado",
+        tone="alert" if USE_MOCK_DATA else "good",
+        dot_color=ORANGE if USE_MOCK_DATA else GREEN,
+    ),
+    context_chip("Comparação ativa", compare, tone="neutral", dot_color=MUTED),
+    context_chip("Tema aplicado", THEME_MODE, tone="accent", dot_color=PURPLE),
+    context_chip(
+        "Resumo da semana",
+        f"Receita {fmt_brl(REV_CW)}",
+        tone="accent",
+        dot_color=PINK,
+    ),
+]
+st.markdown(f'<div class="context-strip">{"".join(hero_chips)}</div>', unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -642,43 +1023,55 @@ with tab1:
     ca, cb = st.columns([3, 1])
 
     with ca:
-        section("Receita semanal — evolução e comparativo YoY")
+        section(f"Receita sobe para {fmt_brl(REV_CW)} na semana")
+        takeaway(
+            f"<strong>Takeaway:</strong> a receita avançou <strong>{drev:.1f}% vs semana anterior</strong> "
+            f"e segue acima do comparativo YoY, com 2026 visualmente enfatizado.",
+            "good" if drev >= 0 else "alert",
+        )
         fig = go.Figure()
         fig.add_trace(go.Bar(
             x=WEEKS, y=rev_yoy, name="2025",
-            marker_color="rgba(255,255,255,0.07)",
+            marker_color=TRACK_STRONG,
             hovertemplate="%{y:,.0f}<extra>2025</extra>",
         ))
         fig.add_trace(go.Scatter(
             x=WEEKS, y=rev, name="2026",
             mode="lines+markers",
             line=dict(color=PINK, width=2.5),
-            marker=dict(size=7, color=PINK, line=dict(color="white", width=1.5)),
-            fill="tonexty", fillcolor="rgba(206,0,141,0.07)",
+            marker=dict(size=7, color=PINK, line=dict(color=CARD, width=1.5)),
+            fill="tonexty", fillcolor=PINK_SOFT,
             hovertemplate="R$ %{y:,.0f}<extra>2026</extra>",
         ))
-        fig.update_layout(**plotly_theme(), height=265, barmode="overlay")
+        fig.update_layout(**plotly_layout(height=265, barmode="overlay"))
         fig.update_yaxes(tickprefix="R$ ", tickformat=",.0f")
-        st.plotly_chart(fig, use_container_width=True, config=cfg)
+        st.plotly_chart(fig, width="stretch", config=cfg)
 
     with cb:
-        section("Mix de receita")
-        fig_mix = go.Figure(go.Pie(
-            labels=["Pontual", "Assinatura"],
-            values=[rev_pt[-1], rev_ass[-1]],
-            hole=0.62,
-            marker=dict(colors=[PINK, PURPLE]),
-            textfont=dict(family="JetBrains Mono", size=11),
-            hovertemplate="%{label}: R$ %{value:,.0f}<extra></extra>",
-        ))
-        fig_mix.add_annotation(
-            text=(f"<b>{rev_pt[-1]/REV_CW*100:.0f}%</b><br>"
-                  f"<span style='font-size:9px'>pontual</span>"),
-            x=0.5, y=0.5, showarrow=False,
-            font=dict(color=TEXT, size=14, family="JetBrains Mono"),
+        mix_labels = ["Pontual", "Assinatura"]
+        mix_values = [rev_pt[-1], rev_ass[-1]]
+        mix_share = [value / REV_CW * 100 for value in mix_values]
+        section(f"{mix_labels[int(np.argmax(mix_values))]} domina o mix da receita")
+        takeaway(
+            f"<strong>Takeaway:</strong> {mix_labels[0]} responde por <strong>{mix_share[0]:.0f}% da receita</strong>, "
+            f"enquanto {mix_labels[1].lower()} representa <strong>{mix_share[1]:.0f}%</strong>.",
+            "accent",
         )
-        fig_mix.update_layout(**plotly_theme(), height=265, showlegend=True)
-        st.plotly_chart(fig_mix, use_container_width=True, config=cfg)
+        fig_mix = go.Figure(go.Bar(
+            x=mix_share,
+            y=mix_labels,
+            orientation="h",
+            marker_color=[PINK, PURPLE],
+            text=[f"{share:.0f}% · {fmt_brl(value)}" for share, value in zip(mix_share, mix_values)],
+            textposition="outside",
+            textfont=dict(family="JetBrains Mono", size=10, color=TEXT),
+            hovertemplate="%{y}: %{x:.1f}%<br>Receita: %{customdata}<extra></extra>",
+            customdata=[fmt_brl(value) for value in mix_values],
+        ))
+        fig_mix.update_layout(**plotly_layout(height=265, showlegend=False, margin=dict(l=10, r=10, t=20, b=10)))
+        fig_mix.update_xaxes(ticksuffix="%", showgrid=False, visible=False, range=[0, max(mix_share) * 1.35])
+        fig_mix.update_yaxes(showgrid=False)
+        st.plotly_chart(fig_mix, width="stretch", config=cfg)
 
     # Product table + Subscriptions
     col_p, col_s = st.columns([2, 1])
@@ -728,15 +1121,15 @@ with tab1:
             mode="lines+markers",
             line=dict(color=PURPLE, width=2),
             marker=dict(size=5, color=PURPLE),
-            fill="tozeroy", fillcolor="rgba(118,6,129,0.10)",
+            fill="tozeroy", fillcolor=PURPLE_SOFT,
             hovertemplate="%{y:.1f}%<extra></extra>",
         ))
         fig_ren.add_hline(y=RENEW_12M * 100, line_dash="dot", line_color=MUTED,
                           annotation_text="média 12m",
                           annotation_font_color=MUTED, annotation_font_size=10)
-        fig_ren.update_layout(**plotly_theme(), height=165, showlegend=False)
+        fig_ren.update_layout(**plotly_layout(height=165, showlegend=False))
         fig_ren.update_yaxes(ticksuffix="%", range=[65, 100])
-        st.plotly_chart(fig_ren, use_container_width=True, config=cfg)
+        st.plotly_chart(fig_ren, width="stretch", config=cfg)
 
     section("Recompra — perfil do comprador na semana")
     r1, r2, r3 = st.columns(3)
@@ -759,7 +1152,13 @@ with tab2:
 
     cb1, cb2 = st.columns([2, 1])
     with cb1:
-        section("Receita por canal")
+        top_channel = CHS[int(np.argmax(ch_rev))]
+        section(f"{top_channel} lidera a receita entre os canais")
+        takeaway(
+            f"<strong>Takeaway:</strong> {top_channel} concentra a maior receita da semana, "
+            f"enquanto o gráfico mantém os demais canais como comparação secundária.",
+            "accent",
+        )
         fig_chr = go.Figure(go.Bar(
             x=CHS, y=ch_rev,
             marker_color=CHS_PAL,
@@ -768,9 +1167,12 @@ with tab2:
             textfont=dict(family="JetBrains Mono", size=10, color=TEXT),
             hovertemplate="%{x}: R$ %{y:,.0f}<extra></extra>",
         ))
-        fig_chr.update_layout(**plotly_theme(), height=270, bargap=0.35,
-                               yaxis=dict(visible=False))
-        st.plotly_chart(fig_chr, use_container_width=True, config=cfg)
+        fig_chr.update_layout(**plotly_layout(
+            height=270,
+            bargap=0.35,
+            yaxis=dict(visible=False),
+        ))
+        st.plotly_chart(fig_chr, width="stretch", config=cfg)
 
     with cb2:
         section("Conv. por canal (R$/Sessão)")
@@ -787,10 +1189,12 @@ with tab2:
             textfont=dict(family="JetBrains Mono", size=10, color=TEXT),
             hovertemplate="%{y}: %{x:.2f}%<extra></extra>",
         ))
-        fig_ccv.update_layout(**plotly_theme(), height=270,
-                               xaxis=dict(visible=False),
-                               yaxis=dict(gridcolor="transparent"))
-        st.plotly_chart(fig_ccv, use_container_width=True, config=cfg)
+        fig_ccv.update_layout(**plotly_layout(
+            height=270,
+            xaxis=dict(visible=False),
+            yaxis=dict(gridcolor="rgba(0,0,0,0)"),
+        ))
+        st.plotly_chart(fig_ccv, width="stretch", config=cfg)
 
     section("Detalhamento por canal")
     rows = ""
@@ -832,6 +1236,11 @@ with tab2:
     section("Google Search Console — evolução semanal")
     cg1, cg2 = st.columns(2)
     with cg1:
+        takeaway(
+            f"<strong>Takeaway:</strong> impressões chegaram a <strong>{fmt_k(gsc_imp[-1])}</strong> e cliques a "
+            f"<strong>{fmt_k(gsc_clk[-1])}</strong>, reforçando a tendência de ganho orgânico.",
+            "good",
+        )
         fig_gsc = go.Figure()
         fig_gsc.add_trace(go.Scatter(
             x=WEEKS, y=gsc_imp, name="Impressões",
@@ -847,13 +1256,21 @@ with tab2:
             marker=dict(size=5),
             yaxis="y2",
         ))
-        layout2 = {**plotly_theme(), "height": 230,
-                   "yaxis": dict(title="Impressões", gridcolor="rgba(255,255,255,.06)",
-                                 tickformat=",.0f"),
-                   "yaxis2": dict(title="Cliques", overlaying="y", side="right",
-                                  gridcolor="transparent", tickformat=",.0f")}
+        layout2 = plotly_layout(
+            height=230,
+            yaxis=dict(title=dict(text="Impressões", font=dict(size=11, color=MUTED)), tickformat=",.0f"),
+            yaxis2=dict(
+                title=dict(text="Cliques", font=dict(size=11, color=MUTED)),
+                overlaying="y",
+                side="right",
+                gridcolor="rgba(0,0,0,0)",
+                tickformat=",.0f",
+                linecolor=BORDER,
+                tickfont=dict(size=11, color=MUTED),
+            ),
+        )
         fig_gsc.update_layout(**layout2)
-        st.plotly_chart(fig_gsc, use_container_width=True, config=cfg)
+        st.plotly_chart(fig_gsc, width="stretch", config=cfg)
 
     with cg2:
         fig_pos = go.Figure(go.Scatter(
@@ -861,14 +1278,19 @@ with tab2:
             mode="lines+markers",
             line=dict(color=ORANGE, width=2.5),
             marker=dict(size=6, color=ORANGE),
-            fill="tozeroy", fillcolor="rgba(239,77,3,.08)",
+            fill="tozeroy", fillcolor=ORANGE_SOFT,
             hovertemplate="Posição %{y:.1f}<extra></extra>",
         ))
-        fig_pos.update_layout(**plotly_theme(), height=230, showlegend=False,
-                               title=dict(text="Posição média — quanto menor, melhor",
-                                          font=dict(size=11, color=MUTED)))
+        fig_pos.update_layout(**plotly_layout(
+            height=230,
+            showlegend=False,
+            title=dict(
+                text="Posição média — quanto menor, melhor",
+                font=dict(size=11, color=MUTED),
+            ),
+        ))
         fig_pos.update_yaxes(autorange="reversed", title="Posição média")
-        st.plotly_chart(fig_pos, use_container_width=True, config=cfg)
+        st.plotly_chart(fig_pos, width="stretch", config=cfg)
 
 
 # ───────────────────────────────────────────────────────────────
@@ -886,35 +1308,52 @@ with tab3:
 
     ca1, ca2 = st.columns([3, 1])
     with ca1:
-        section("Sessões — evolução e comparativo YoY")
+        section(f"Sessões crescem para {fmt_k(SESS_CW)} na semana")
+        takeaway(
+            f"<strong>Takeaway:</strong> o volume avançou <strong>{dsess:.1f}% vs semana anterior</strong> "
+            f"e a linha de 2026 foi destacada para acelerar a leitura.",
+            "good" if dsess >= 0 else "alert",
+        )
         fig_sess = go.Figure()
         fig_sess.add_trace(go.Bar(
             x=WEEKS, y=sess_yoy, name="2025",
-            marker_color="rgba(255,255,255,0.07)",
+            marker_color=TRACK_STRONG,
         ))
         fig_sess.add_trace(go.Scatter(
             x=WEEKS, y=sess_wk, name="2026",
             mode="lines+markers",
             line=dict(color=PURPLE, width=2.5),
-            marker=dict(size=7, color=PURPLE, line=dict(color="white", width=1.5)),
+            marker=dict(size=7, color=PURPLE, line=dict(color=CARD, width=1.5)),
             hovertemplate="%{y:,.0f}<extra>2026</extra>",
         ))
-        fig_sess.update_layout(**plotly_theme(), height=265, barmode="overlay")
+        fig_sess.update_layout(**plotly_layout(height=265, barmode="overlay"))
         fig_sess.update_yaxes(tickformat=",")
-        st.plotly_chart(fig_sess, use_container_width=True, config=cfg)
+        st.plotly_chart(fig_sess, width="stretch", config=cfg)
 
     with ca2:
-        section("Audiência por canal")
-        fig_caud = go.Figure(go.Pie(
-            labels=CHS, values=ch_sess,
-            hole=0.55,
-            marker=dict(colors=CHS_PAL),
-            textfont=dict(size=10),
-            hovertemplate="%{label}: %{value:,}<extra></extra>",
+        sess_sorted = sorted(zip(CHS, ch_sess, CHS_PAL), key=lambda item: item[1], reverse=True)
+        top_aud = sess_sorted[0][0]
+        total_sess = sum(ch_sess)
+        section(f"{top_aud} concentra a maior audiência")
+        takeaway(
+            f"<strong>Takeaway:</strong> {top_aud} representa <strong>{sess_sorted[0][1] / total_sess * 100:.0f}% das sessões</strong>, "
+            f"com comparação direta entre canais por comprimento, não por área.",
+            "accent",
+        )
+        fig_caud = go.Figure(go.Bar(
+            x=[item[1] for item in sess_sorted],
+            y=[item[0] for item in sess_sorted],
+            orientation="h",
+            marker_color=[item[2] for item in sess_sorted],
+            text=[f"{fmt_k(item[1])} · {item[1] / total_sess * 100:.0f}%" for item in sess_sorted],
+            textposition="outside",
+            textfont=dict(family="JetBrains Mono", size=10, color=TEXT),
+            hovertemplate="%{y}: %{x:,} sessões<extra></extra>",
         ))
-        fig_caud.update_layout(**plotly_theme(), height=265,
-                                legend=dict(font=dict(size=10), orientation="v"))
-        st.plotly_chart(fig_caud, use_container_width=True, config=cfg)
+        fig_caud.update_layout(**plotly_layout(height=265, showlegend=False))
+        fig_caud.update_xaxes(visible=False, showgrid=False, range=[0, sess_sorted[0][1] * 1.28])
+        fig_caud.update_yaxes(showgrid=False, categoryorder="array", categoryarray=[item[0] for item in sess_sorted[::-1]])
+        st.plotly_chart(fig_caud, width="stretch", config=cfg)
 
     section("Perfil da audiência — três dimensões")
     cd1, cd2, cd3 = st.columns(3)
@@ -936,7 +1375,7 @@ with tab3:
                       <span style="color:{MUTED};font-size:10px;"> {pct:.0f}%</span>
                     </div>
                   </div>
-                  <div style="width:100%;height:4px;background:rgba(255,255,255,.07);border-radius:2px;">
+                  <div style="width:100%;height:4px;background:{TRACK};border-radius:2px;">
                     <div style="width:{pct}%;height:100%;background:{color};border-radius:2px;"></div>
                   </div>
                 </div>""", unsafe_allow_html=True)
@@ -979,10 +1418,14 @@ with tab3:
             text=[f"{cv:.1f}%"], textposition="outside",
             textfont=dict(family="JetBrains Mono", size=11),
         ))
-    fig_seg.update_layout(**plotly_theme(), height=240, showlegend=False,
-                           barmode="group", bargap=0.38)
+    fig_seg.update_layout(**plotly_layout(
+        height=240,
+        showlegend=False,
+        barmode="group",
+        bargap=0.38,
+    ))
     fig_seg.update_yaxes(ticksuffix="%", title="Taxa de Conversão")
-    st.plotly_chart(fig_seg, use_container_width=True, config=cfg)
+    st.plotly_chart(fig_seg, width="stretch", config=cfg)
 
 
 # ───────────────────────────────────────────────────────────────
@@ -1000,7 +1443,12 @@ with tab4:
     cf1, cf2 = st.columns([2, 1])
 
     with cf1:
-        section("Funil de cadastro")
+        section("Maior perda acontece no fechamento do cadastro")
+        takeaway(
+            "<strong>Takeaway:</strong> o maior gargalo está entre início do formulário e cadastro efetivado, "
+            "então a clareza do fluxo final importa mais do que trazer novos visitantes para o topo.",
+            "alert",
+        )
         FCOLORS = [PURPLE, "#8a0a9a", PINK, "#d4336b", ORANGE]
         total_v = REG_FUNNEL[0][1]
         for i, (label, val, conv) in enumerate(REG_FUNNEL):
@@ -1025,11 +1473,11 @@ with tab4:
             x=[r[1] for r in REG_FUNNEL],
             textinfo="value+percent initial",
             marker=dict(color=FCOLORS),
-            connector=dict(line=dict(color="rgba(255,255,255,0.08)", width=1)),
+            connector=dict(line=dict(color=BORDER, width=1)),
             textfont=dict(family="JetBrains Mono", size=11, color=TEXT),
         ))
-        fig_fnn.update_layout(**plotly_theme(), height=280)
-        st.plotly_chart(fig_fnn, use_container_width=True, config=cfg)
+        fig_fnn.update_layout(**plotly_layout(height=280))
+        st.plotly_chart(fig_fnn, width="stretch", config=cfg)
 
     with cf2:
         section("Qualidade dos cadastros")
@@ -1050,7 +1498,7 @@ with tab4:
                   {qty:,} <span style="color:{MUTED};font-size:10px;">{pct:.0f}%</span>
                 </div>
               </div>
-              <div style="width:100%;height:5px;background:rgba(255,255,255,.07);border-radius:2px;">
+              <div style="width:100%;height:5px;background:{TRACK};border-radius:2px;">
                 <div style="width:{pct}%;height:100%;background:{color};border-radius:2px;"></div>
               </div>
             </div>""", unsafe_allow_html=True)
@@ -1061,17 +1509,19 @@ with tab4:
             mode="lines+markers",
             line=dict(color=PINK, width=2.5),
             marker=dict(size=6, color=PINK),
-            fill="tozeroy", fillcolor="rgba(206,0,141,0.08)",
+            fill="tozeroy", fillcolor=PINK_SOFT,
             hovertemplate="Score: %{y:.1f}<extra></extra>",
         ))
         fig_sc.add_hline(y=60, line_dash="dot", line_color=MUTED,
                           annotation_text="meta 60",
                           annotation_font_color=MUTED, annotation_font_size=10)
-        fig_sc.update_layout(**plotly_theme(), height=190, showlegend=False,
-                              title=dict(text="Evolução do score médio",
-                                         font=dict(size=11, color=MUTED)))
+        fig_sc.update_layout(**plotly_layout(
+            height=190,
+            showlegend=False,
+            title=dict(text="Evolução do score médio", font=dict(size=11, color=MUTED)),
+        ))
         fig_sc.update_yaxes(range=[50, 78])
-        st.plotly_chart(fig_sc, use_container_width=True, config=cfg)
+        st.plotly_chart(fig_sc, width="stretch", config=cfg)
 
     section("Cadastros por canal de origem")
     rows = ""
@@ -1131,11 +1581,11 @@ with tab5:
             x=[r[1] for r in CART_TRAD],
             textinfo="value+percent initial",
             marker=dict(color=[PURPLE, "#8a0a9a", PINK, "#d4336b", ORANGE]),
-            connector=dict(line=dict(color="rgba(255,255,255,0.08)", width=1)),
+            connector=dict(line=dict(color=BORDER, width=1)),
             textfont=dict(family="JetBrains Mono", size=11, color=TEXT),
         ))
-        fig_ct.update_layout(**plotly_theme(), height=290)
-        st.plotly_chart(fig_ct, use_container_width=True, config=cfg)
+        fig_ct.update_layout(**plotly_layout(height=290))
+        st.plotly_chart(fig_ct, width="stretch", config=cfg)
 
         for label, val, conv, aband in CART_TRAD[1:]:
             if aband is not None:
@@ -1159,11 +1609,11 @@ with tab5:
             x=[r[1] for r in CART_QUICK[:4]],
             textinfo="value+percent initial",
             marker=dict(color=[PINK, "#d4336b", ORANGE, "#5b2d8e"]),
-            connector=dict(line=dict(color="rgba(255,255,255,0.08)", width=1)),
+            connector=dict(line=dict(color=BORDER, width=1)),
             textfont=dict(family="JetBrains Mono", size=11, color=TEXT),
         ))
-        fig_cq.update_layout(**plotly_theme(), height=290)
-        st.plotly_chart(fig_cq, use_container_width=True, config=cfg)
+        fig_cq.update_layout(**plotly_layout(height=290))
+        st.plotly_chart(fig_cq, width="stretch", config=cfg)
 
         st.markdown(f"""<div class="alert-box">
           ⚠️ <b>{CART_QUICK[4][1]} falhas de processamento</b>
@@ -1190,7 +1640,13 @@ with tab5:
     cp1, cp2 = st.columns(2)
 
     with cp1:
-        section("Conversão por meio de pagamento")
+        best_payment = max(PAYMENTS, key=lambda item: item[2])
+        section(f"{best_payment[0]} é o meio com melhor conversão")
+        takeaway(
+            f"<strong>Takeaway:</strong> {best_payment[0]} converte <strong>{best_payment[2] * 100:.1f}% </strong>, "
+            "enquanto os demais meios aparecem como comparação de suporte.",
+            "good",
+        )
         pay_labels  = [p[0] for p in PAYMENTS]
         pay_conc    = [p[2] * 100 for p in PAYMENTS]
         pay_aband   = [p[3] * 100 for p in PAYMENTS]
@@ -1209,9 +1665,9 @@ with tab5:
             textposition="inside",
             textfont=dict(family="JetBrains Mono", size=10, color="white"),
         ))
-        fig_pay.update_layout(**plotly_theme(), height=270, barmode="stack", bargap=0.35)
+        fig_pay.update_layout(**plotly_layout(height=270, barmode="stack", bargap=0.35))
         fig_pay.update_yaxes(ticksuffix="%")
-        st.plotly_chart(fig_pay, use_container_width=True, config=cfg)
+        st.plotly_chart(fig_pay, width="stretch", config=cfg)
 
     with cp2:
         section("Conversão por produto — após adição ao carrinho")
@@ -1228,10 +1684,13 @@ with tab5:
             textfont=dict(family="JetBrains Mono", size=9),
             hovertemplate="%{x}: %{y:.1f}%<extra></extra>",
         ))
-        fig_pcv.update_layout(**plotly_theme(), height=270, bargap=0.3,
-                               xaxis=dict(tickangle=-35, tickfont=dict(size=9)),
-                               yaxis=dict(ticksuffix="%"))
-        st.plotly_chart(fig_pcv, use_container_width=True, config=cfg)
+        fig_pcv.update_layout(**plotly_layout(
+            height=270,
+            bargap=0.3,
+            xaxis=dict(tickangle=-35, tickfont=dict(size=9)),
+            yaxis=dict(ticksuffix="%"),
+        ))
+        st.plotly_chart(fig_pcv, width="stretch", config=cfg)
 
     # ── Upsell vitrine ──────────────────────────────────────────
     section("Performance da vitrine de upsell (carrinho)")
@@ -1274,7 +1733,7 @@ with tab5:
                     <div class="band-label" style="font-size:12px;">{lbl}</div>
                     <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{color};">{val:.1f}%</div>
                   </div>
-                  <div style="width:100%;height:4px;background:rgba(255,255,255,.07);border-radius:2px;">
+                  <div style="width:100%;height:4px;background:{TRACK};border-radius:2px;">
                     <div style="width:{bar_w}%;height:100%;background:{color};border-radius:2px;"></div>
                   </div>
                 </div>""", unsafe_allow_html=True)
