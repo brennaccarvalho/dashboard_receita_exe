@@ -33,23 +33,23 @@ THEME_MODE = st.sidebar.radio(
 def get_tokens(mode: str) -> dict:
     if mode == "Claro":
         return {
-            "NAVY": "#2d2d3d",
-            "PURPLE": "#5c0068",
-            "PINK": "#a80070",
-            "ORANGE": "#c45a00",
-            "BG": "#f9f5ef",
-            "CARD": "#fefdfb",
-            "CARD2": "#f0ebe6",
-            "TEXT": "#0d0d0d",
-            "MUTED": "#4a4a56",
-            "GREEN": "#0d5d1a",
-            "RED_SOFT": "#b53a3a",
+            "NAVY": "#3a3a45",
+            "PURPLE": "#4a1f61",
+            "PINK": "#8b1f56",
+            "ORANGE": "#a84000",
+            "BG": "#faf8f3",
+            "CARD": "#ffffff",
+            "CARD2": "#f5f1eb",
+            "TEXT": "#1a1a1a",
+            "MUTED": "#6a6a7a",
+            "GREEN": "#1a6b2a",
+            "RED_SOFT": "#a54a4a",
         }
 
     # dark mode (default)
     return {
-        "NAVY": "#151731",
-        "PURPLE": "#760681",
+        "NAVY": "#6b6b8f",
+        "PURPLE": "#a442c9",
         "PINK": "#CE008D",
         "ORANGE": "#EF4D03",
         "BG": "#0b0d1f",
@@ -540,12 +540,8 @@ globals().update(data)
 # ═══════════════════════════════════════════════════════════════
 with st.sidebar:
     st.markdown(f"""
-    <div style="text-align:center; padding:10px 0 28px 0;">
-      <div style="font-size:38px; margin-bottom:6px;">�</div>
-      <div style="font-family:'Aconchego','Georgia',serif; font-size:22px;
-                  color:{TEXT}; letter-spacing:0.02em;">Analytics</div>
-      <div style="font-size:10px; color:{MUTED}; text-transform:uppercase;
-                  letter-spacing:0.14em; margin-top:2px;">Dashboard semanal</div>
+    <div style="text-align:center; padding:10px 0 10px 0;">
+      <h1 style="color:{TEXT}; margin:0; letter-spacing:0.02em;">Analytics</h1>
     </div>
     """, unsafe_allow_html=True)
 
