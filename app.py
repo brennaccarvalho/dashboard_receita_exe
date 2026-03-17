@@ -1018,14 +1018,6 @@ hero_chips = [
         tone="alert" if USE_MOCK_DATA else "good",
         dot_color=ORANGE if USE_MOCK_DATA else GREEN,
     ),
-    context_chip("Comparação ativa", compare, tone="neutral", dot_color=MUTED),
-    context_chip("Tema aplicado", THEME_MODE, tone="accent", dot_color=PURPLE),
-    context_chip(
-        "Resumo da semana",
-        f"Receita {fmt_brl(REV_CW)}",
-        tone="accent",
-        dot_color=PINK,
-    ),
 ]
 st.markdown(f'<div class="context-strip">{"".join(hero_chips)}</div>', unsafe_allow_html=True)
 
