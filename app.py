@@ -33,46 +33,46 @@ THEME_MODE = st.sidebar.radio(
 def get_tokens(mode: str) -> dict:
     if mode == "Claro":
         return {
-            "NAVY": "#24324A",
-            "PURPLE": "#5D3FD3",
-            "PINK": "#B53C74",
-            "ORANGE": "#C96822",
-            "BG": "#F4EDE3",
+            "NAVY": "#1F3552",
+            "PURPLE": "#4F46E5",
+            "PINK": "#D94877",
+            "ORANGE": "#C97A1F",
+            "BG": "#F6F3EF",
             "CARD": "#FFF9F1",
-            "CARD2": "#F0E5D6",
-            "TEXT": "#201A15",
-            "MUTED": "#6F6258",
-            "GREEN": "#2E8B57",
-            "RED_SOFT": "#C95E5E",
-            "SIDEBAR_BG": "#1B2538",
-            "SIDEBAR_TEXT": "#F7F2EA",
-            "BORDER": "#DACDBE",
-            "BORDER_SOFT": "#E8DED2",
-            "GRID": "#D9CCBE",
-            "TABLE_HEAD": "#F3EADF",
-            "SHADOW": "rgba(56, 38, 20, 0.10)",
+            "CARD2": "#F1ECE5",
+            "TEXT": "#18212B",
+            "MUTED": "#6B7280",
+            "GREEN": "#1F8A5B",
+            "RED_SOFT": "#C65B5B",
+            "SIDEBAR_BG": "#20324B",
+            "SIDEBAR_TEXT": "#F8FAFC",
+            "BORDER": "#DDD6CE",
+            "BORDER_SOFT": "#ECE4DC",
+            "GRID": "#D8D1C8",
+            "TABLE_HEAD": "#F5F1EB",
+            "SHADOW": "rgba(15, 23, 42, 0.06)",
         }
 
     # dark mode (default)
     return {
-        "NAVY": "#0D1B2E",
-        "PURPLE": "#9A6BFF",
-        "PINK": "#FF5CA8",
-        "ORANGE": "#FF8A3D",
-        "BG": "#07111D",
-        "CARD": "#101B2D",
-        "CARD2": "#17243A",
-        "TEXT": "#ECF3FF",
-        "MUTED": "#95A4BF",
-        "GREEN": "#53D39B",
-        "RED_SOFT": "#FF7E7E",
-        "SIDEBAR_BG": "#091221",
-        "SIDEBAR_TEXT": "#F3F7FF",
-        "BORDER": "#243550",
-        "BORDER_SOFT": "#1E2A40",
-        "GRID": "#30415C",
-        "TABLE_HEAD": "#142033",
-        "SHADOW": "rgba(0, 0, 0, 0.26)",
+        "NAVY": "#0F172A",
+        "PURPLE": "#7C8CF8",
+        "PINK": "#E56B91",
+        "ORANGE": "#F2A541",
+        "BG": "#0B1220",
+        "CARD": "#121B2B",
+        "CARD2": "#172233",
+        "TEXT": "#E5EDF8",
+        "MUTED": "#94A3B8",
+        "GREEN": "#2FB37D",
+        "RED_SOFT": "#F07C7C",
+        "SIDEBAR_BG": "#10192B",
+        "SIDEBAR_TEXT": "#F8FAFC",
+        "BORDER": "#253247",
+        "BORDER_SOFT": "#1C2738",
+        "GRID": "#334155",
+        "TABLE_HEAD": "#162132",
+        "SHADOW": "rgba(0, 0, 0, 0.18)",
     }
 
 _tokens = get_tokens(THEME_MODE)
@@ -118,7 +118,7 @@ SIDEBAR_BORDER = rgba(SIDEBAR_TEXT, 0.16)
 st.markdown(f"""
 <style>
 /* ── Google Fonts ───────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 /* ── Base ───────────────────────────────────────── */
 *, *::before, *::after {{ box-sizing: border-box; }}
@@ -126,13 +126,15 @@ st.markdown(f"""
 html, body, [class*="css"], .stApp, .main {{
   font-family: 'Figtree', sans-serif !important;
   color: {TEXT} !important;
+  line-height: 1.45;
+}}
+p, [data-testid="stMarkdownContainer"] p {{
+  margin-bottom: 0;
 }}
 
 [data-testid="stAppViewContainer"], .stApp {{
   background:
-    radial-gradient(circle at top right, {rgba(PURPLE, 0.16)}, transparent 28%),
-    radial-gradient(circle at top left, {rgba(ORANGE, 0.12)}, transparent 22%),
-    linear-gradient(180deg, {BG} 0%, {CARD2} 135%) !important;
+    linear-gradient(180deg, {BG} 0%, {CARD2} 140%) !important;
   background-attachment: fixed;
 }}
 
@@ -141,7 +143,7 @@ html, body, [class*="css"], .stApp, .main {{
 }}
 
 h1, h2, h3, h4 {{
-  font-family: 'Cormorant Garamond', 'Georgia', serif !important;
+  font-family: 'Figtree', sans-serif !important;
   font-weight: 600 !important;
   color: {TEXT} !important;
 }}
@@ -149,20 +151,20 @@ h1, h2, h3, h4 {{
 /* ── Hide Streamlit chrome ──────────────────────── */
 #MainMenu, footer, .stDeployButton {{ visibility: hidden; }}
 .block-container {{
-  padding: 1.5rem 1.8rem 3rem 1.8rem !important;
-  max-width: 1460px !important;
+  padding: 1.25rem 1.5rem 2.5rem 1.5rem !important;
+  max-width: 1440px !important;
 }}
 
 /* ── Sidebar ────────────────────────────────────── */
 [data-testid="stSidebar"] > div:first-child {{
-  background: linear-gradient(180deg, {SIDEBAR_BG} 0%, {NAVY} 100%) !important;
+  background: {SIDEBAR_BG} !important;
   border-right: 1px solid {SIDEBAR_BORDER};
 }}
 [data-testid="stSidebar"] * {{
   color: {SIDEBAR_TEXT} !important;
 }}
 [data-testid="stSidebar"] [data-baseweb="select"] > div {{
-  background: {SIDEBAR_PANEL} !important;
+  background: {rgba(SIDEBAR_TEXT, 0.06)} !important;
   border-color: {SIDEBAR_BORDER} !important;
   border-radius: 12px !important;
 }}
@@ -175,20 +177,33 @@ h1, h2, h3, h4 {{
   gap: 0.35rem;
 }}
 [data-testid="stSidebar"] div[role="radiogroup"] label {{
-  background: {SIDEBAR_PANEL};
-  border: 1px solid {rgba(SIDEBAR_TEXT, 0.08)};
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: 12px;
-  padding: 0.42rem 0.55rem;
+  padding: 0.46rem 0.6rem;
+  transition: all 0.15s ease;
+}}
+[data-testid="stSidebar"] div[role="radiogroup"] label:hover {{
+  background: {rgba(SIDEBAR_TEXT, 0.06)};
+  border-color: {rgba(SIDEBAR_TEXT, 0.10)};
+}}
+[data-testid="stSidebar"] div[role="radiogroup"] label:has(input:checked) {{
+  background: {rgba(PURPLE, 0.22)};
+  border-color: {rgba(PURPLE, 0.45)};
+  box-shadow: inset 0 0 0 1px {rgba(PURPLE, 0.18)};
+}}
+[data-testid="stSidebar"] div[role="radiogroup"] label:has(input:checked) p {{
+  color: {SIDEBAR_TEXT} !important;
+  font-weight: 600 !important;
 }}
 [data-testid="stSidebar"] .stCheckbox > label {{
   padding-top: 0.35rem;
 }}
 .sidebar-panel {{
-  background: {SIDEBAR_PANEL};
+  background: {rgba(SIDEBAR_TEXT, 0.05)};
   border: 1px solid {SIDEBAR_BORDER};
   border-radius: 16px;
   padding: 14px 15px;
-  box-shadow: inset 0 1px 0 {rgba(SIDEBAR_TEXT, 0.05)};
 }}
 .sidebar-kicker {{
   font-size: 10px;
@@ -217,21 +232,20 @@ h1, h2, h3, h4 {{
 
 /* ── Context strip ──────────────────────────────── */
 .context-strip {{
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 0.65rem;
   margin: -0.55rem 0 1.1rem 0;
 }}
 .context-chip {{
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  align-items: flex-start;
   gap: 0.55rem;
-  padding: 0.68rem 0.85rem;
+  padding: 0.8rem 0.9rem;
   border-radius: 16px;
   border: 1px solid {BORDER};
-  background: {rgba(CARD, 0.86)};
-  box-shadow: 0 12px 26px {SHADOW};
-  min-width: 172px;
+  background: {CARD};
+  min-height: 72px;
 }}
 .context-chip.good {{
   border-color: {rgba(GREEN, 0.32)};
@@ -270,32 +284,40 @@ h1, h2, h3, h4 {{
 
 /* ── Tabs ───────────────────────────────────────── */
 .stTabs [data-baseweb="tab-list"] {{
-  background: {rgba(CARD, 0.84)};
-  border-radius: 18px;
-  padding: 6px;
+  background: {CARD};
+  border-radius: 16px;
+  padding: 4px;
   gap: 5px;
   border: 1px solid {BORDER};
-  box-shadow: 0 10px 24px {SHADOW};
   flex-wrap: wrap;
-  backdrop-filter: blur(10px);
+  align-items: center;
   margin-bottom: 0.2rem;
 }}
 .stTabs [data-baseweb="tab"] {{
   font-family: 'Figtree', sans-serif;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   color: {MUTED};
   border-radius: 12px;
-  padding: 10px 18px;
+  padding: 9px 16px;
   border: none !important;
   background: transparent !important;
   white-space: nowrap;
+  transition: all 0.15s ease;
+}}
+.stTabs [data-baseweb="tab"]:hover {{
+  color: {TEXT};
+  background: {rgba(PURPLE, 0.08)} !important;
+}}
+.stTabs [data-baseweb="tab"]:focus-visible {{
+  outline: 2px solid {rgba(PURPLE, 0.35)};
+  outline-offset: 1px;
 }}
 .stTabs [aria-selected="true"] {{
-  background: linear-gradient(135deg, {PURPLE}, {PINK}) !important;
+  background: {PURPLE} !important;
   color: #fff !important;
   font-weight: 600 !important;
-  box-shadow: 0 10px 18px {rgba(PURPLE, 0.22)};
+  box-shadow: none;
 }}
 .stTabs [data-baseweb="tab-panel"] {{
   background: transparent !important;
@@ -306,17 +328,17 @@ h1, h2, h3, h4 {{
 /* ── KPI Card ───────────────────────────────────── */
 .kpi-card {{
   background: {CARD};
-  border-radius: 18px;
-  padding: 18px 20px 16px 20px;
+  border-radius: 16px;
+  padding: 16px 18px 14px 18px;
   border: 1px solid {BORDER};
-  height: 110px;
+  min-height: 116px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 0.45rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 14px 30px {SHADOW};
-  backdrop-filter: blur(6px);
+  box-shadow: none;
 }}
 .kpi-card::before {{
   content: '';
@@ -326,54 +348,51 @@ h1, h2, h3, h4 {{
   border-radius: 0 0 18px 18px;
 }}
 .kpi-card::after {{
-  content: '';
-  position: absolute;
-  top: -32px;
-  right: -20px;
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  background: {rgba(PURPLE, 0.08)};
+  display: none;
 }}
 .kpi-label {{
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
   color: {MUTED};
   text-transform: uppercase;
   letter-spacing: 0.09em;
   font-family: 'Figtree', sans-serif;
+  min-height: 2.4em;
 }}
 .kpi-value {{
   font-family: 'JetBrains Mono', monospace;
-  font-size: 24px;
+  font-size: 23px;
   font-weight: 600;
   color: {TEXT};
-  line-height: 1;
+  line-height: 1.1;
 }}
 .kpi-delta-pos {{
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
   color: {GREEN};
+  margin-top: auto;
 }}
 .kpi-delta-neg {{
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
   color: {ORANGE};
+  margin-top: auto;
 }}
 .kpi-delta-neu {{
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
   color: {MUTED};
+  margin-top: auto;
 }}
 
 /* ── Section Title ──────────────────────────────── */
 .sec-title {{
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
-  font-size: 24px;
+  font-family: 'Figtree', sans-serif;
+  font-size: 18px;
   font-weight: 600;
   color: {TEXT};
-  margin: 1.5rem 0 0.85rem 0;
-  padding-bottom: 10px;
+  margin: 1.25rem 0 0.65rem 0;
+  padding-bottom: 8px;
   border-bottom: 1px solid {BORDER};
 }}
 
@@ -386,9 +405,9 @@ h1, h2, h3, h4 {{
   font-family: 'Figtree', sans-serif;
   background: {CARD};
   border: 1px solid {BORDER};
-  border-radius: 18px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 14px 30px {SHADOW};
+  box-shadow: none;
 }}
 .dtable th {{
   background: {TABLE_HEAD};
@@ -421,16 +440,17 @@ h1, h2, h3, h4 {{
 .band {{
   background: {CARD};
   border-radius: 14px;
-  padding: 11px 16px;
+  padding: 12px 14px;
   margin-bottom: 7px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.9rem;
   border: 1px solid {BORDER};
-  box-shadow: 0 10px 22px {SHADOW};
+  box-shadow: none;
 }}
 .band-label {{ font-size: 12.5px; color: {TEXT}; }}
-.band-val {{ font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; }}
+.band-val {{ font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; text-align: right; }}
 
 /* ── Funnel Row ─────────────────────────────────── */
 .frow {{
@@ -441,8 +461,9 @@ h1, h2, h3, h4 {{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.9rem;
   border-left: 3px solid transparent;
-  box-shadow: 0 10px 22px {SHADOW};
+  box-shadow: none;
 }}
 .frow-label {{ font-size: 12.5px; font-weight: 500; color: {TEXT}; }}
 .frow-sub   {{ font-size: 10.5px; color: {MUTED}; font-family: 'JetBrains Mono', monospace; margin-top:2px; }}
@@ -458,7 +479,7 @@ h1, h2, h3, h4 {{
   font-size: 12.5px;
   color: {TEXT};
   margin-bottom: 10px;
-  box-shadow: 0 10px 20px {SHADOW};
+  box-shadow: none;
 }}
 .info-box {{
   background: {PURPLE_SOFT};
@@ -468,14 +489,14 @@ h1, h2, h3, h4 {{
   font-size: 12.5px;
   color: {TEXT};
   margin-bottom: 10px;
-  box-shadow: 0 10px 20px {SHADOW};
+  box-shadow: none;
 }}
 .takeaway-note {{
-  margin: -0.15rem 0 0.8rem 0;
+  margin: 0 0 0.8rem 0;
   padding: 0.72rem 0.9rem;
   border-radius: 14px;
   border: 1px solid {BORDER};
-  background: {rgba(CARD, 0.82)};
+  background: {CARD};
   color: {TEXT};
   font-size: 12.5px;
   line-height: 1.45;
@@ -513,6 +534,13 @@ h1, h2, h3, h4 {{
   border-radius: 12px !important;
   box-shadow: none !important;
 }}
+.stSelectbox [data-baseweb="select"] > div:hover {{
+  border-color: {rgba(PURPLE, 0.35)} !important;
+}}
+[data-baseweb="select"] > div:focus-within {{
+  border-color: {PURPLE} !important;
+  box-shadow: 0 0 0 1px {rgba(PURPLE, 0.20)} !important;
+}}
 .stSelectbox label, .stRadio label {{
   font-size: 11px !important;
   text-transform: uppercase;
@@ -527,6 +555,18 @@ div[role="radiogroup"] label {{
   font-size: 13px !important;
 }}
 
+/* ── Layout alignment ───────────────────────────── */
+[data-testid="stHorizontalBlock"] {{
+  align-items: stretch;
+}}
+[data-testid="column"] {{
+  display: flex;
+  flex-direction: column;
+}}
+[data-testid="column"] > div {{
+  width: 100%;
+}}
+
 /* ── Divider ────────────────────────────────────── */
 hr {{ border-color: {BORDER} !important; }}
 
@@ -539,22 +579,15 @@ hr {{ border-color: {BORDER} !important; }}
 .hero-card {{
   position: relative;
   overflow: hidden;
-  margin-bottom: 1.6rem;
-  padding: 1.5rem 1.7rem;
-  border-radius: 24px;
+  margin-bottom: 1rem;
+  padding: 1.25rem 1.4rem;
+  border-radius: 18px;
   border: 1px solid {BORDER};
-  background:
-    linear-gradient(135deg, {rgba(CARD, 0.96)} 0%, {rgba(CARD2, 0.92)} 100%);
-  box-shadow: 0 18px 38px {SHADOW};
+  background: {CARD};
+  box-shadow: none;
 }}
 .hero-card::after {{
-  content: '';
-  position: absolute;
-  inset: auto -40px -54px auto;
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, {rgba(PURPLE, 0.22)}, {rgba(ORANGE, 0.18)});
+  display: none;
 }}
 .hero-kicker {{
   font-size: 10px;
@@ -564,10 +597,11 @@ hr {{ border-color: {BORDER} !important; }}
   margin-bottom: 8px;
 }}
 .hero-title {{
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
-  font-size: 38px;
-  line-height: 0.98;
+  font-family: 'Figtree', sans-serif;
+  font-size: 30px;
+  line-height: 1.08;
   color: {TEXT};
+  letter-spacing: -0.02em;
 }}
 .hero-meta {{
   margin-top: 10px;
@@ -580,12 +614,14 @@ hr {{ border-color: {BORDER} !important; }}
 
 /* ── Plotly surfaces ────────────────────────────── */
 div[data-testid="stPlotlyChart"] {{
-  background: {rgba(CARD, 0.82)};
+  background: {CARD};
   border: 1px solid {BORDER};
-  border-radius: 20px;
-  padding: 0.45rem 0.55rem 0.35rem 0.55rem;
-  box-shadow: 0 16px 30px {SHADOW};
-  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 0.35rem 0.45rem 0.2rem 0.45rem;
+  box-shadow: none;
+}}
+div[data-testid="stPlotlyChart"] > div {{
+  border-radius: 12px;
 }}
 
 /* ── Responsive ─────────────────────────────────── */
@@ -598,7 +634,6 @@ div[data-testid="stPlotlyChart"] {{
   }}
   .context-chip {{
     min-width: 150px;
-    flex: 1 1 220px;
   }}
   .stTabs [data-baseweb="tab-list"] {{
     gap: 0.4rem;
@@ -614,7 +649,7 @@ div[data-testid="stPlotlyChart"] {{
     border-radius: 20px;
   }}
   .hero-title {{
-    font-size: 26px;
+    font-size: 24px;
   }}
   .hero-meta {{
     font-size: 12px;
@@ -627,11 +662,10 @@ div[data-testid="stPlotlyChart"] {{
     min-width: 100%;
   }}
   .kpi-card {{
-    height: auto;
     min-height: 110px;
   }}
   .sec-title {{
-    font-size: 21px;
+    font-size: 17px;
   }}
 }}
 </style>
@@ -659,6 +693,11 @@ def fmt_k(v: float) -> str:
     if v >= 1_000_000: return f"{v/1_000_000:.1f}M"
     if v >= 1_000: return f"{v/1_000:.1f}k"
     return str(int(v))
+
+
+def spacer(height: int = 14) -> None:
+    st.markdown(f'<div style="height:{height}px;"></div>', unsafe_allow_html=True)
+
 
 def kpi(label: str, value: str, delta: float | None = None,
         good_if_positive: bool = True, accent: str = PINK) -> str:
@@ -792,7 +831,7 @@ CHS     = ["Orgânico", "E-mail", "Direto", "Redes Sociais", "Pago", "Alertas"]
 ch_rev  = [33200, 19400, 13800, 10100,  8600,  9100]
 ch_sess = [44800, 11200, 17600,  9400,  5800,  5200]
 ch_conv = [r/s*100 for r, s in zip(ch_rev, ch_sess)]
-CHS_PAL = [PURPLE, PINK, ORANGE, "#5b2d8e", "#ff6b35", "#a0259a"]
+CHS_PAL = [PURPLE, PINK, ORANGE, NAVY, GREEN, MUTED]
 
 # ── Audience ─────────────────────────────────────────────────
 SESS_CW   = 94_000; SESS_PW = 87_400
@@ -1017,7 +1056,7 @@ with tab1:
     with c3: st.markdown(kpi("Ticket Médio",    fmt_brl(TK_CW),  dtk,   accent=ORANGE), unsafe_allow_html=True)
     with c4: st.markdown(kpi("ARR Total",       fmt_brl(ARR),    darr,  accent=PURPLE), unsafe_allow_html=True)
 
-    st.markdown("<br/>", unsafe_allow_html=True)
+    spacer()
 
     # Revenue trend + Mix
     ca, cb = st.columns([3, 1])
@@ -1148,7 +1187,7 @@ with tab2:
     with kc3: st.markdown(kpi("Receita — Direto",       fmt_brl(ch_rev[2]),  2.1,  accent=ORANGE), unsafe_allow_html=True)
     with kc4: st.markdown(kpi("Receita — Alertas",      fmt_brl(ch_rev[5]),  8.4,  accent=PURPLE), unsafe_allow_html=True)
 
-    st.markdown("<br/>", unsafe_allow_html=True)
+    spacer()
 
     cb1, cb2 = st.columns([2, 1])
     with cb1:
@@ -1216,7 +1255,7 @@ with tab2:
       <tbody>{rows}</tbody>
     </table>""", unsafe_allow_html=True)
 
-    st.markdown("<br/>", unsafe_allow_html=True)
+    spacer()
 
     ce1, ce2 = st.columns(2)
     with ce1:
@@ -1304,7 +1343,7 @@ with tab3:
     with ka3: st.markdown(kpi("Taxa de Engajamento",f"{ENG_RATE*100:.1f}%", 1.4,  accent=ORANGE), unsafe_allow_html=True)
     with ka4: st.markdown(kpi("Páginas / Sessão",   f"{PPG:.1f}",           0.2,  accent=PURPLE), unsafe_allow_html=True)
 
-    st.markdown("<br/>", unsafe_allow_html=True)
+    spacer()
 
     ca1, ca2 = st.columns([3, 1])
     with ca1:
@@ -1438,7 +1477,7 @@ with tab4:
     with kr3: st.markdown(kpi("Conv. cadastro→venda",    "14,2%",               1.4,  accent=ORANGE), unsafe_allow_html=True)
     with kr4: st.markdown(kpi("Cadastros Completos",     "8,4%",               -0.7,  accent=PURPLE), unsafe_allow_html=True)
 
-    st.markdown("<br/>", unsafe_allow_html=True)
+    spacer()
 
     cf1, cf2 = st.columns([2, 1])
 
@@ -1449,7 +1488,7 @@ with tab4:
             "então a clareza do fluxo final importa mais do que trazer novos visitantes para o topo.",
             "alert",
         )
-        FCOLORS = [PURPLE, "#8a0a9a", PINK, "#d4336b", ORANGE]
+        FCOLORS = [PURPLE, NAVY, PINK, GREEN, ORANGE]
         total_v = REG_FUNNEL[0][1]
         for i, (label, val, conv) in enumerate(REG_FUNNEL):
             pct  = val / total_v * 100
@@ -1503,7 +1542,7 @@ with tab4:
               </div>
             </div>""", unsafe_allow_html=True)
 
-        st.markdown("<br/>", unsafe_allow_html=True)
+        spacer(10)
         fig_sc = go.Figure(go.Scatter(
             x=WEEKS, y=score_trend,
             mode="lines+markers",
@@ -1543,7 +1582,7 @@ with tab4:
       <tbody>{rows}</tbody>
     </table>""", unsafe_allow_html=True)
 
-    st.markdown("<br/>", unsafe_allow_html=True)
+    spacer()
     section("Tabela de pontuação — critérios de qualidade")
     attr_rows = """
     <tr><td>Cadastro completo (obrigatórios)</td><td class='mono'>20 pts</td><td><span class='bp'>base</span></td></tr>
@@ -1569,7 +1608,7 @@ with tab5:
     with kch3: st.markdown(kpi("Conv. compra rápida",  f"{CART_CONV_QUICK*100:.1f}%",1.4,  accent=ORANGE), unsafe_allow_html=True)
     with kch4: st.markdown(kpi("Ticket médio geral",    fmt_brl(84.6),               2.1,  accent=PURPLE), unsafe_allow_html=True)
 
-    st.markdown("<br/>", unsafe_allow_html=True)
+    spacer()
 
     cc1, cc2 = st.columns(2)
 
@@ -1580,7 +1619,7 @@ with tab5:
             y=[r[0] for r in CART_TRAD],
             x=[r[1] for r in CART_TRAD],
             textinfo="value+percent initial",
-            marker=dict(color=[PURPLE, "#8a0a9a", PINK, "#d4336b", ORANGE]),
+            marker=dict(color=[PURPLE, NAVY, PINK, GREEN, ORANGE]),
             connector=dict(line=dict(color=BORDER, width=1)),
             textfont=dict(family="JetBrains Mono", size=11, color=TEXT),
         ))
@@ -1608,7 +1647,7 @@ with tab5:
             y=[r[0] for r in CART_QUICK[:4]],
             x=[r[1] for r in CART_QUICK[:4]],
             textinfo="value+percent initial",
-            marker=dict(color=[PINK, "#d4336b", ORANGE, "#5b2d8e"]),
+            marker=dict(color=[PINK, PURPLE, ORANGE, NAVY]),
             connector=dict(line=dict(color=BORDER, width=1)),
             textfont=dict(family="JetBrains Mono", size=11, color=TEXT),
         ))
@@ -1636,7 +1675,7 @@ with tab5:
                         f'</div>', unsafe_allow_html=True)
 
     # ── Payment + Product conversion ────────────────────────────
-    st.markdown("<br/>", unsafe_allow_html=True)
+    spacer()
     cp1, cp2 = st.columns(2)
 
     with cp1:
