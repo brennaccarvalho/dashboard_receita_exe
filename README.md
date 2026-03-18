@@ -1,12 +1,12 @@
-# 🔮 Analytics Dashboard
+# Analytics Dashboard
 
-> Dashboard semanal de performance — Receita · Canais · Audiência · Cadastros · Checkout
+> Dashboard semanal de performance: Receita, Canais, Audiência, Cadastros e Checkout.
 
-Painel de BI construído em **Streamlit + Plotly**, cobrindo frameworks de KPIs e análises definidos em uma proposta. Desenvolvido para acompanhamento semanal de performance.
+Painel de BI construído em **Streamlit + Plotly**, cobrindo os frameworks de KPIs e análises definidos na proposta. Desenvolvido para acompanhamento semanal de performance.
 
 ---
 
-## 📸 Visão geral
+## Visão geral
 
 | Aba | O que monitora |
 |---|---|
@@ -18,7 +18,7 @@ Painel de BI construído em **Streamlit + Plotly**, cobrindo frameworks de KPIs 
 
 ---
 
-## 🚀 Rodando localmente
+## Rodando localmente
 
 ### 1. Clone o repositório
 
@@ -27,7 +27,7 @@ git clone https://github.com/seu-usuario/analytics-dashboard.git
 cd analytics-dashboard
 ```
 
-### 2. Crie um ambiente virtual (recomendado)
+### 2. Crie um ambiente virtual
 
 ```bash
 python -m venv .venv
@@ -41,13 +41,10 @@ source .venv/bin/activate        # Linux / macOS
 pip install -r requirements.txt
 ```
 
-### 4. Configure credenciais (opcional)
-
-Caso queira conectar a fontes de dados reais:
+### 4. Configure segredos (opcional)
 
 ```bash
 cp .streamlit/secrets.toml.example .streamlit/secrets.toml
-# edite .streamlit/secrets.toml com suas credenciais
 ```
 
 ### 5. Rode o app
@@ -60,55 +57,35 @@ Acesse em: [http://localhost:8501](http://localhost:8501)
 
 ---
 
-## ☁️ Deploy no Streamlit Cloud
+## Deploy no Streamlit Cloud
 
-1. Faça fork / push do repositório no GitHub
-2. Acesse [share.streamlit.io](https://share.streamlit.io) e clique em **"New app"**
-3. Selecione o repositório, branch `main` e arquivo `app.py`
-4. Em **"Advanced settings"**, adicione os segredos do `.streamlit/secrets.toml` se necessário
-5. Clique em **Deploy** — o app fica disponível em um link público `*.streamlit.app`
+1. Faça fork ou push do repositório no GitHub.
+2. Acesse [share.streamlit.io](https://share.streamlit.io) e clique em **New app**.
+3. Selecione o repositório, branch `main` e arquivo `app.py`.
+4. Em **Advanced settings**, adicione os segredos do `.streamlit/secrets.toml` se necessário.
+5. Clique em **Deploy**.
 
 ---
 
-## 🗂 Estrutura do projeto
+## Estrutura do projeto
 
-```
+```text
 analytics-dashboard/
-│
-├── app.py                        # Aplicação principal
-├── requirements.txt              # Dependências Python
+├── app.py
+├── db.py
+├── queries.py
+├── requirements.txt
 ├── README.md
 ├── .gitignore
-│
 ├── .streamlit/
-│   ├── config.toml               # Tema dark + configurações do servidor
-│   └── secrets.toml.example      # Template de credenciais (não commitado)
-│
-└── assets/                       # Fontes, imagens e estáticos locais
+│   ├── config.toml
+│   └── secrets.toml.example
+└── assets/
 ```
 
 ---
 
-## 🎨 Design System
-
-| Elemento | Fonte |
-|---|---|
-| Títulos / headers | `Aconchego` (local) → fallback `Georgia, serif` |
-| Body / UI | `Figtree` via Google Fonts |
-| Números / KPIs | `JetBrains Mono` |
-
-**Paleta de cores:**
-
-```
-#151731  →  Navy (primary / background)
-#760681  →  Roxo
-#CE008D  →  Rosa (CTA / destaque)
-#EF4D03  →  Laranja (alertas / atenção)
-```
-
----
-
-## 📦 Dependências principais
+## Dependências principais
 
 | Pacote | Versão mínima | Uso |
 |---|---|---|
@@ -116,24 +93,47 @@ analytics-dashboard/
 | `plotly` | 5.18.0 | Gráficos interativos |
 | `pandas` | 2.0.0 | Manipulação de dados |
 | `numpy` | 1.24.0 | Cálculos numéricos |
+| `psycopg2-binary` | 2.9.9 | Conexão direta com AWS Redshift |
 
 ---
 
 ## 🔌 Conectando dados reais
 
-O `app.py` usa dados simulados (seed fixo para reprodutibilidade). Para usar dados reais, desative o toggle **"Usar dados mock (sem conexão)"** na barra lateral e implemente a função `get_data(use_mock=False)` no `app.py`.
+1. Copie o arquivo de exemplo:
 
-Você pode carregar dados de qualquer fonte, por exemplo:
+```bash
+cp .streamlit/secrets.toml.example .streamlit/secrets.toml
+```
 
-- **Google Analytics 4** → via `google-analytics-data`
-- **Google Search Console** → via `google-search-console`
-- **BigQuery / banco interno** → via `google-cloud-bigquery` ou `sqlalchemy`
-- **Planilhas Google** → via `gspread`
+2. Preencha o arquivo com as credenciais do cluster Redshift:
 
-Adicione credenciais no `.streamlit/secrets.toml` e acesse com `st.secrets["chave"]`.
+```toml
+[redshift]
+host     = "meu-cluster.xxxx.us-east-1.redshift.amazonaws.com"
+port     = 5439
+database = "analytics"
+user     = "username"
+password = "password"
+```
+
+3. Inicie o app com `streamlit run app.py`.
+
+4. Na sidebar, desative o toggle **Modo mock (sem Redshift)** para usar as queries reais.
+
+5. Se o app não conseguir conectar, ele continua funcionando em modo seguro:
+   - as consultas retornam `DataFrame` vazio;
+   - o dashboard mostra `Sem dados para este período` nas seções afetadas;
+   - o modo mock continua disponível mesmo sem credenciais.
+
+### Observações importantes
+
+- O app usa `psycopg2` direto, sem SQLAlchemy e sem `st.experimental_connection`.
+- As credenciais são lidas de `st.secrets["redshift"]`.
+- Se o cluster Redshift estiver em VPC privada ou com restrição de rede, a máquina que roda o Streamlit precisa ter acesso ao cluster.
+- Se o cluster não for público, pode ser necessário configurar VPN, bastion, peering, Security Group ou whitelist de IP antes da conexão funcionar.
 
 ---
 
-## 📄 Licença
+## Licença
 
 Uso interno. Não distribuir externamente.
